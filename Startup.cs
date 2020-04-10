@@ -32,8 +32,8 @@ namespace MrPiattoWAPI
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddConnections();
             services.AddDbContext<MrPiattoWAPI.Model.MrPiattoDBContext>(options =>
-                //options.UseSqlServer("Server = MFARFAN\\MSSQLSERVER01; Database = MrPiattoDB;User Id=sql_user;Password=1234;"));
-                options.UseSqlServer("Server = SRVMRPIATTO; Database = MrPiattoDB; User Id=sql_user;Password=1234;"));
+                options.UseSqlServer("Server = MFARFAN\\MSSQLSERVER01; Database = MrPiattoDB;User Id=sql_user;Password=1234;"));
+                ///options.UseSqlServer("Server = SRVMRPIATTO; Database = MrPiattoDB; User Id=sql_user;Password=1234;"));
             services.AddMvc().AddControllersAsServices();
             services.AddControllers().AddControllersAsServices();
             

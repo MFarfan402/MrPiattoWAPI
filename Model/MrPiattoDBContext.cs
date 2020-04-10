@@ -39,8 +39,8 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=SRVMRPIATTO;Database=MrPiattoDB;User Id=sql_user;Password=1234;");
-                //optionsBuilder.UseSqlServer(@"Server=MFARFAN\MSSQLSERVER01;Database=MrPiattoDB;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=SRVMRPIATTO;Database=MrPiattoDB;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer(@"Server=MFARFAN\MSSQLSERVER01;Database=MrPiattoDB;User Id=sql_user;Password=1234;");
             }
         }
 
