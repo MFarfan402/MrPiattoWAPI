@@ -4,43 +4,47 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MrPiattoWAPI.Model
 {
-    public partial class MrPiattoDBContext : DbContext
+    public partial class MrPiattoDB2Context : DbContext
     {
-        public MrPiattoDBContext()
+        public MrPiattoDB2Context()
         {
         }
 
-        public MrPiattoDBContext(DbContextOptions<MrPiattoDBContext> options)
+        public MrPiattoDB2Context(DbContextOptions<MrPiattoDB2Context> options)
             : base(options)
         {
         }
 
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Comments> Comments { get; set; }
+        public virtual DbSet<Complaints> Complaints { get; set; }
         public virtual DbSet<DayStatistics> DayStatistics { get; set; }
         public virtual DbSet<HourStatistics> HourStatistics { get; set; }
         public virtual DbSet<LockedHours> LockedHours { get; set; }
+        public virtual DbSet<LockedRestaurants> LockedRestaurants { get; set; }
+        public virtual DbSet<LockedTables> LockedTables { get; set; }
         public virtual DbSet<PaymentOptions> PaymentOptions { get; set; }
         public virtual DbSet<Policies> Policies { get; set; }
         public virtual DbSet<Reservation> Reservation { get; set; }
         public virtual DbSet<Restaurant> Restaurant { get; set; }
         public virtual DbSet<RestaurantPhotos> RestaurantPhotos { get; set; }
         public virtual DbSet<RestaurantStrikes> RestaurantStrikes { get; set; }
+        public virtual DbSet<RestaurantTables> RestaurantTables { get; set; }
+        public virtual DbSet<Schedule> Schedule { get; set; }
         public virtual DbSet<Surveys> Surveys { get; set; }
-        public virtual DbSet<Tables> Tables { get; set; }
-        public virtual DbSet<TextFloor> TextFloor { get; set; }
+        public virtual DbSet<TableDistribution> TableDistribution { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserPhotos> UserPhotos { get; set; }
         public virtual DbSet<UserRestaurant> UserRestaurant { get; set; }
         public virtual DbSet<UserStrikes> UserStrikes { get; set; }
         public virtual DbSet<Waiters> Waiters { get; set; }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Server=SRVMRPIATTO;Database=MrPiattoDB;User Id=sql_user;Password=1234;");
-                optionsBuilder.UseSqlServer(@"Server=MFARFAN\MSSQLSERVER01;Database=MrPiattoDB;User Id=sql_user;Password=1234;");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;Trusted_Connection=True;");
             }
         }
 
@@ -48,31 +52,25 @@ namespace MrPiattoWAPI.Model
         {
             modelBuilder.Entity<Categories>(entity =>
             {
-                entity.HasKey(e => e.Idcategories);
+                entity.HasKey(e => e.Idcategory);
 
-                entity.Property(e => e.Idcategories).HasColumnName("IDCategories");
+                entity.Property(e => e.Idcategory).HasColumnName("IDCategory");
 
                 entity.Property(e => e.Category)
+                    .IsRequired()
                     .HasColumnName("category")
                     .HasMaxLength(50)
                     .IsUnicode(false);
-
-                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
-
-                entity.HasOne(d => d.IdrestaurantNavigation)
-                    .WithMany(p => p.Categories)
-                    .HasForeignKey(d => d.Idrestaurant)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Categories_Restaurant");
             });
 
             modelBuilder.Entity<Comments>(entity =>
             {
-                entity.HasKey(e => e.Idcomments);
+                entity.HasKey(e => e.Idcomment);
 
-                entity.Property(e => e.Idcomments).HasColumnName("IDComments");
+                entity.Property(e => e.Idcomment).HasColumnName("IDComment");
 
                 entity.Property(e => e.Comment)
+                    .IsRequired()
                     .HasColumnName("comment")
                     .HasMaxLength(255)
                     .IsUnicode(false);
@@ -86,6 +84,7 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
                 entity.Property(e => e.Status)
+                    .IsRequired()
                     .HasColumnName("status")
                     .HasMaxLength(10)
                     .IsUnicode(false);
@@ -95,13 +94,57 @@ namespace MrPiattoWAPI.Model
                     .HasForeignKey(d => d.Idrestaurant)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Comments_Restaurant");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany(p => p.Comments)
+                    .HasForeignKey(d => d.Iduser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Comments_User");
+            });
+
+            modelBuilder.Entity<Complaints>(entity =>
+            {
+                entity.HasKey(e => e.Idcomplaints)
+                    .HasName("PK_Table_1");
+
+                entity.Property(e => e.Idcomplaints).HasColumnName("IDComplaints");
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("date");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnName("description")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+
+                entity.Property(e => e.Reason)
+                    .IsRequired()
+                    .HasColumnName("reason")
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdrestaurantNavigation)
+                    .WithMany(p => p.Complaints)
+                    .HasForeignKey(d => d.Idrestaurant)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Complaints_Restaurant");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany(p => p.Complaints)
+                    .HasForeignKey(d => d.Iduser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Complaints_User");
             });
 
             modelBuilder.Entity<DayStatistics>(entity =>
             {
-                entity.HasKey(e => e.IddayStatistics);
+                entity.HasKey(e => e.IddaysStatistics);
 
-                entity.Property(e => e.IddayStatistics).HasColumnName("IDDayStatistics");
+                entity.Property(e => e.IddaysStatistics).HasColumnName("IDDaysStatistics");
 
                 entity.Property(e => e.AverageFriday).HasColumnName("averageFriday");
 
@@ -197,17 +240,13 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.EndDate)
                     .HasColumnName("endDate")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.EndHour).HasColumnName("endHour");
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.Property(e => e.StartDate)
                     .HasColumnName("startDate")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.StartHour).HasColumnName("startHour");
+                    .HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.LockedHours)
@@ -216,33 +255,67 @@ namespace MrPiattoWAPI.Model
                     .HasConstraintName("FK_LockedHours_Restaurant");
             });
 
+            modelBuilder.Entity<LockedRestaurants>(entity =>
+            {
+                entity.HasKey(e => e.IdlockedRestaurants);
+
+                entity.Property(e => e.IdlockedRestaurants).HasColumnName("IDLockedRestaurants");
+
+                entity.Property(e => e.Idrestaurants).HasColumnName("IDRestaurants");
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+
+                entity.Property(e => e.UnlockedDate)
+                    .HasColumnName("unlockedDate")
+                    .HasColumnType("date");
+
+                entity.HasOne(d => d.IdrestaurantsNavigation)
+                    .WithMany(p => p.LockedRestaurants)
+                    .HasForeignKey(d => d.Idrestaurants)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_LockedRestaurants_Restaurant");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany(p => p.LockedRestaurants)
+                    .HasForeignKey(d => d.Iduser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_LockedRestaurants_User");
+            });
+
+            modelBuilder.Entity<LockedTables>(entity =>
+            {
+                entity.HasKey(e => e.IdlockedTables);
+
+                entity.Property(e => e.IdlockedTables).HasColumnName("IDLockedTables");
+
+                entity.Property(e => e.EndDate)
+                    .HasColumnName("endDate")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Idtables).HasColumnName("IDTables");
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnName("startDate")
+                    .HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdtablesNavigation)
+                    .WithMany(p => p.LockedTables)
+                    .HasForeignKey(d => d.Idtables)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_LockedTables_RestaurantTables");
+            });
+
             modelBuilder.Entity<PaymentOptions>(entity =>
             {
                 entity.HasKey(e => e.IdpaymentOptions);
 
                 entity.Property(e => e.IdpaymentOptions).HasColumnName("IDPaymentOptions");
 
-                entity.Property(e => e.Amex)
-                    .HasColumnName("AMEX")
-                    .HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.Cash).HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.Checks).HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
-
-                entity.Property(e => e.MasterCard).HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.Transfers).HasDefaultValueSql("((0))");
-
-                entity.Property(e => e.Visa).HasDefaultValueSql("((0))");
-
-                entity.HasOne(d => d.IdrestaurantNavigation)
-                    .WithMany(p => p.PaymentOptions)
-                    .HasForeignKey(d => d.Idrestaurant)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PaymentOptions_Restaurant");
+                entity.Property(e => e.PaymentOption)
+                    .IsRequired()
+                    .HasColumnName("paymentOption")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Policies>(entity =>
@@ -284,21 +357,19 @@ namespace MrPiattoWAPI.Model
                     .HasColumnName("date")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
-
                 entity.Property(e => e.Idtable).HasColumnName("IDTable");
 
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
-                entity.HasOne(d => d.IdrestaurantNavigation)
+                entity.HasOne(d => d.IdtableNavigation)
                     .WithMany(p => p.Reservation)
-                    .HasForeignKey(d => d.Idrestaurant)
+                    .HasForeignKey(d => d.Idtable)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Reservation_Restaurant");
+                    .HasConstraintName("FK_Reservation_RestaurantTables");
 
-                entity.HasOne(d => d.Idrestaurant1)
+                entity.HasOne(d => d.IduserNavigation)
                     .WithMany(p => p.Reservation)
-                    .HasForeignKey(d => d.Idrestaurant)
+                    .HasForeignKey(d => d.Iduser)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Reservation_User");
             });
@@ -310,27 +381,36 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.Property(e => e.Address)
+                    .IsRequired()
                     .HasColumnName("address")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.ClosingTime).HasColumnName("closingTime");
-
                 entity.Property(e => e.Confirmation).HasColumnName("confirmation");
 
                 entity.Property(e => e.Description)
+                    .IsRequired()
                     .HasColumnName("description")
                     .HasMaxLength(300)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Dress)
+                    .IsRequired()
                     .HasColumnName("dress")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Idcategories).HasColumnName("IDCategories");
+
+                entity.Property(e => e.Idpayment).HasColumnName("IDPayment");
+
                 entity.Property(e => e.LastLogin)
                     .HasColumnName("lastLogin")
                     .HasColumnType("datetime");
+
+                entity.Property(e => e.Lat).HasColumnName("lat");
+
+                entity.Property(e => e.Long).HasColumnName("long");
 
                 entity.Property(e => e.Mail)
                     .IsRequired()
@@ -339,11 +419,10 @@ namespace MrPiattoWAPI.Model
                     .IsUnicode(false);
 
                 entity.Property(e => e.Name)
+                    .IsRequired()
                     .HasColumnName("name")
                     .HasMaxLength(20)
                     .IsUnicode(false);
-
-                entity.Property(e => e.OpeningTime).HasColumnName("openingTime");
 
                 entity.Property(e => e.Password)
                     .IsRequired()
@@ -352,6 +431,7 @@ namespace MrPiattoWAPI.Model
                     .IsUnicode(false);
 
                 entity.Property(e => e.Phone)
+                    .IsRequired()
                     .HasColumnName("phone")
                     .HasMaxLength(10)
                     .IsUnicode(false);
@@ -361,6 +441,18 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Score).HasColumnName("score");
 
                 entity.Property(e => e.SeverityLevel).HasColumnName("severityLevel");
+
+                entity.HasOne(d => d.IdcategoriesNavigation)
+                    .WithMany(p => p.Restaurant)
+                    .HasForeignKey(d => d.Idcategories)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Restaurant_Categories");
+
+                entity.HasOne(d => d.IdpaymentNavigation)
+                    .WithMany(p => p.Restaurant)
+                    .HasForeignKey(d => d.Idpayment)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Restaurant_PaymentOptions");
             });
 
             modelBuilder.Entity<RestaurantPhotos>(entity =>
@@ -372,8 +464,9 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.Property(e => e.Url)
+                    .IsRequired()
                     .HasColumnName("url")
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
@@ -391,7 +484,7 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Date)
                     .HasColumnName("date")
-                    .HasColumnType("date");
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
@@ -404,100 +497,135 @@ namespace MrPiattoWAPI.Model
                     .HasConstraintName("FK_RestaurantStrikes_Restaurant");
             });
 
+            modelBuilder.Entity<RestaurantTables>(entity =>
+            {
+                entity.HasKey(e => e.Idtables);
+
+                entity.Property(e => e.Idtables).HasColumnName("IDTables");
+
+                entity.Property(e => e.AvarageUse).HasColumnName("avarageUse");
+
+                entity.Property(e => e.CoordenateX).HasColumnName("coordenateX");
+
+                entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
+
+                entity.Property(e => e.FloorName)
+                    .IsRequired()
+                    .HasColumnName("floorName")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
+
+                entity.HasOne(d => d.IdrestaurantNavigation)
+                    .WithMany(p => p.RestaurantTables)
+                    .HasForeignKey(d => d.Idrestaurant)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RestaurantTables_Restaurant");
+            });
+
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.HasKey(e => e.Idschedule);
+
+                entity.Property(e => e.Idschedule).HasColumnName("IDSchedule");
+
+                entity.Property(e => e.Ctfriday).HasColumnName("CTFriday");
+
+                entity.Property(e => e.Ctmonday).HasColumnName("CTMonday");
+
+                entity.Property(e => e.Ctsaturday).HasColumnName("CTSaturday");
+
+                entity.Property(e => e.Ctsunday).HasColumnName("CTSunday");
+
+                entity.Property(e => e.Ctthursday).HasColumnName("CTThursday");
+
+                entity.Property(e => e.Cttuestday).HasColumnName("CTTuestday");
+
+                entity.Property(e => e.Ctwednesday).HasColumnName("CTWednesday");
+
+                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
+
+                entity.Property(e => e.Otfriday).HasColumnName("OTFriday");
+
+                entity.Property(e => e.Otmonday).HasColumnName("OTMonday");
+
+                entity.Property(e => e.Otsaturday).HasColumnName("OTSaturday");
+
+                entity.Property(e => e.Otsunday).HasColumnName("OTSunday");
+
+                entity.Property(e => e.Otthursday).HasColumnName("OTThursday");
+
+                entity.Property(e => e.Ottuesday).HasColumnName("OTTuesday");
+
+                entity.Property(e => e.Otwednesday).HasColumnName("OTWednesday");
+
+                entity.HasOne(d => d.IdrestaurantNavigation)
+                    .WithMany(p => p.Schedule)
+                    .HasForeignKey(d => d.Idrestaurant)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Schedule_Restaurant");
+            });
+
             modelBuilder.Entity<Surveys>(entity =>
             {
-                entity.HasKey(e => e.Idsurveys);
+                entity.HasKey(e => e.Idsurvey);
 
-                entity.Property(e => e.Idsurveys).HasColumnName("IDSurveys");
+                entity.Property(e => e.Idsurvey).HasColumnName("IDSurvey");
 
                 entity.Property(e => e.ComfortRating).HasColumnName("comfortRating");
 
                 entity.Property(e => e.FoodRating).HasColumnName("foodRating");
 
-                entity.Property(e => e.Idclient).HasColumnName("IDClient");
-
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
                 entity.Property(e => e.Idwaiter).HasColumnName("IDWaiter");
 
                 entity.Property(e => e.ServiceRating).HasColumnName("serviceRating");
-
-                entity.Property(e => e.ServiceType)
-                    .HasColumnName("serviceType")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Surveys)
                     .HasForeignKey(d => d.Idrestaurant)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Surveys_Restaurant");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany(p => p.Surveys)
+                    .HasForeignKey(d => d.Iduser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Surveys_User");
+
+                entity.HasOne(d => d.IdwaiterNavigation)
+                    .WithMany(p => p.Surveys)
+                    .HasForeignKey(d => d.Idwaiter)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Surveys_Waiters");
             });
 
-            modelBuilder.Entity<Tables>(entity =>
+            modelBuilder.Entity<TableDistribution>(entity =>
             {
-                entity.HasKey(e => e.Idtables);
+                entity.HasKey(e => e.IdtableDistribution)
+                    .HasName("PK_Table_1_1");
+
+                entity.Property(e => e.IdtableDistribution).HasColumnName("IDTableDistribution");
+
+                entity.Property(e => e.CoordenateX).HasColumnName("coordenateX");
+
+                entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.Idtables).HasColumnName("IDTables");
 
-                entity.Property(e => e.AverageUse).HasColumnName("averageUse");
-
-                entity.Property(e => e.CoordenateX).HasColumnName("coordenateX");
-
-                entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
-
-                entity.Property(e => e.FloorName)
-                    .HasColumnName("floorName")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
-
-                entity.Property(e => e.Status)
-                    .HasColumnName("status")
-                    .HasMaxLength(15)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.IdrestaurantNavigation)
-                    .WithMany(p => p.Tables)
-                    .HasForeignKey(d => d.Idrestaurant)
+                entity.HasOne(d => d.IdtablesNavigation)
+                    .WithMany(p => p.TableDistribution)
+                    .HasForeignKey(d => d.Idtables)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Tables_Reservation");
-
-                entity.HasOne(d => d.Idrestaurant1)
-                    .WithMany(p => p.Tables)
-                    .HasForeignKey(d => d.Idrestaurant)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Tables_Restaurant");
-            });
-
-            modelBuilder.Entity<TextFloor>(entity =>
-            {
-                entity.HasKey(e => e.IdtextFloor);
-
-                entity.Property(e => e.IdtextFloor).HasColumnName("IDTextFloor");
-
-                entity.Property(e => e.CoordenateX).HasColumnName("coordenateX");
-
-                entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
-
-                entity.Property(e => e.FloorName)
-                    .HasColumnName("floorName")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
-
-                entity.Property(e => e.Text)
-                    .HasColumnName("text")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.IdrestaurantNavigation)
-                    .WithMany(p => p.TextFloor)
-                    .HasForeignKey(d => d.Idrestaurant)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_TextFloor_Restaurant");
+                    .HasConstraintName("FK_TableDistribution_RestaurantTables");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -507,36 +635,47 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
                 entity.Property(e => e.FirstName)
+                    .IsRequired()
                     .HasColumnName("firstName")
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Gender)
+                    .IsRequired()
                     .HasColumnName("gender")
                     .HasMaxLength(15)
                     .IsUnicode(false);
 
                 entity.Property(e => e.LastName)
+                    .IsRequired()
                     .HasColumnName("lastName")
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Mail)
+                    .IsRequired()
                     .HasColumnName("mail")
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Password)
+                    .IsRequired()
                     .HasColumnName("password")
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Phone)
+                    .IsRequired()
                     .HasColumnName("phone")
                     .HasMaxLength(10)
                     .IsUnicode(false);
 
+                entity.Property(e => e.UnlockedDay)
+                    .HasColumnName("unlockedDay")
+                    .HasColumnType("date");
+
                 entity.Property(e => e.UserType)
+                    .IsRequired()
                     .HasColumnName("userType")
                     .HasMaxLength(15)
                     .IsUnicode(false);
@@ -544,15 +683,16 @@ namespace MrPiattoWAPI.Model
 
             modelBuilder.Entity<UserPhotos>(entity =>
             {
-                entity.HasKey(e => e.IduserPhotos);
+                entity.HasKey(e => e.IduserPhoto);
 
-                entity.Property(e => e.IduserPhotos).HasColumnName("IDUserPhotos");
+                entity.Property(e => e.IduserPhoto).HasColumnName("IDUserPhoto");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
                 entity.Property(e => e.Url)
+                    .IsRequired()
                     .HasColumnName("url")
                     .HasMaxLength(100)
                     .IsUnicode(false);
@@ -612,6 +752,7 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
                 entity.Property(e => e.Reason)
+                    .IsRequired()
                     .HasColumnName("reason")
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -625,19 +766,21 @@ namespace MrPiattoWAPI.Model
 
             modelBuilder.Entity<Waiters>(entity =>
             {
-                entity.HasKey(e => e.Idwaiters);
+                entity.HasKey(e => e.Idwaiter);
 
-                entity.Property(e => e.Idwaiters).HasColumnName("IDWaiters");
+                entity.Property(e => e.Idwaiter).HasColumnName("IDWaiter");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.Property(e => e.WaiterFirstName)
+                    .IsRequired()
                     .HasColumnName("waiterFirstName")
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
-                entity.Property(e => e.WaiterLastName)
-                    .HasColumnName("waiterLastName")
+                entity.Property(e => e.WaiterLasName)
+                    .IsRequired()
+                    .HasColumnName("waiterLasName")
                     .HasMaxLength(25)
                     .IsUnicode(false);
 

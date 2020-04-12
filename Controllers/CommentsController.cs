@@ -13,9 +13,9 @@ namespace MrPiattoWAPI.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly MrPiattoDBContext _context;
+        private readonly MrPiattoDB2Context _context;
 
-        public CommentsController(MrPiattoDBContext context)
+        public CommentsController(MrPiattoDB2Context context)
         {
             _context = context;
         }

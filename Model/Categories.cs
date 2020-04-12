@@ -5,10 +5,14 @@ namespace MrPiattoWAPI.Model
 {
     public partial class Categories
     {
-        public int Idcategories { get; set; }
-        public int Idrestaurant { get; set; }
+        public Categories()
+        {
+            Restaurant = new HashSet<Restaurant>();
+        }
+
+        public int Idcategory { get; set; }
         public string Category { get; set; }
 
-        public virtual Restaurant IdrestaurantNavigation { get; set; }
+        public virtual ICollection<Restaurant> Restaurant { get; set; }
     }
 }

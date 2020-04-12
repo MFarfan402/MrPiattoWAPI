@@ -5,7 +5,7 @@ namespace MrPiattoWAPI.Model
 {
     public partial class UserPhotos
     {
-        public int IduserPhotos { get; set; }
+        public int IduserPhoto { get; set; }
         public int Idrestaurant { get; set; }
         public int Iduser { get; set; }
         public string Url { get; set; }

@@ -9,13 +9,13 @@ using MrPiattoWAPI.Model;
 
 namespace MrPiattoWAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/UserRestaurants")]
     [ApiController]
     public class UserRestaurantsController : ControllerBase
     {
-        private readonly MrPiattoDBContext _context;
+        private readonly MrPiattoDB2Context _context;
 
-        public UserRestaurantsController(MrPiattoDBContext context)
+        public UserRestaurantsController(MrPiattoDB2Context context)
         {
             _context = context;
         }
