@@ -35,9 +35,11 @@ namespace MrPiattoWAPI
                 options.UseSqlServer("Server = MFARFAN\\MSSQLSERVER01; Database = MrPiattoDB2;User Id=sql_user;Password=1234;"));
                 ///options.UseSqlServer("Server = SRVMRPIATTO; Database = MrPiattoDB2; User Id=sql_user;Password=1234;"));
             services.AddMvc().AddControllersAsServices();
-            services.AddControllers().AddControllersAsServices();
-            
-            
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+                .AddControllersAsServices();
+
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AutomaticAuthentication = false;
