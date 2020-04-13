@@ -38,7 +38,9 @@ namespace MrPiattoWAPI.Controllers
         public async Task<ActionResult<Restaurant>> GetRestaurant(int id)
         {
             var restaurant = await _context.Restaurant.Where(r => r.Idrestaurant == id)
-                .Include(r => r.IdcategoriesNavigation).FirstAsync();
+                .Include(r => r.IdcategoriesNavigation)
+                .Include(r => r.IdpaymentNavigation)
+                .FirstAsync();
 
             if (restaurant == null)
             {
