@@ -21,10 +21,13 @@ namespace MrPiattoWAPI.Controllers
         }
 
         // GET: api/Comments
+        // MAURICIO FARFAN
+        // Verificador -> Reseñas
+        // Method used to get all the comments that are in an 'verifier' status.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Comments>>> GetComments()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments.Where(c => c.Status == "Verifier").ToListAsync();
         }
 
         // GET: api/Comments/{idRestaurant}
