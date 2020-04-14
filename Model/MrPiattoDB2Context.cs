@@ -518,6 +518,10 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Seats).HasColumnName("seats");
 
+                entity.Property(e => e.FloorIndex).HasColumnName("floorIndex");
+
+                entity.Property(e => e.tableName).HasColumnName("tableName");
+
                 entity.Property(e => e.FloorName)
                     .IsRequired()
                     .HasColumnName("floorName")

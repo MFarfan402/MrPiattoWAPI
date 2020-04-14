@@ -20,6 +20,8 @@ namespace MrPiattoWAPI.Model
         public double AvarageUse { get; set; }
         public string Type { get; set; }
         public string Seats { get; set; }
+        public int FloorIndex { get; set; }
+        public string tableName { get; set; }
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
         public virtual ICollection<LockedTables> LockedTables { get; set; }

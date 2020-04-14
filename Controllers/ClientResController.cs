@@ -12,28 +12,27 @@ namespace MrPiattoWAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GridController : ControllerBase
+    public class ClientResController : ControllerBase
     {
         private readonly MrPiattoDB2Context _context;
 
-        public GridController(MrPiattoDB2Context context)
+        public ClientResController(MrPiattoDB2Context context)
         {
             _context = context;
         }
 
-        // GET: api/Grid/5
-        [HttpGet("{idRes}")]
-        public async Task<ActionResult<IEnumerable<RestaurantTables>>> GetTables(int idRes)
+        // GET: api/ClientRes/5
+        [HttpGet("{idClient}")]
+        public async Task<ActionResult<User>> GetClient(int idClient)
         {
-            var restaurantTables = await _context.RestaurantTables.Include(r => r.Reservation).Where(r => r.Idrestaurant == idRes).ToListAsync();
+            var client = await _context.User.Where(u => u.Iduser == idClient).FirstAsync();
 
-            if (restaurantTables == null)
+            if (client == null)
             {
                 return NotFound();
             }
 
-            return restaurantTables;
+            return client;
         }
-
     }
 }
