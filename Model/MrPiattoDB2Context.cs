@@ -590,6 +590,8 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.FoodRating).HasColumnName("foodRating");
 
+                entity.Property(e => e.Idcomment).HasColumnName("IDComment");
+
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
@@ -599,6 +601,11 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.ServiceRating).HasColumnName("serviceRating");
 
                 entity.Property(e => e.GeneralScore).HasColumnName("generalScore");
+
+                entity.HasOne(d => d.IdcommentNavigation)
+                    .WithMany(p => p.Surveys)
+                    .HasForeignKey(d => d.Idcomment)
+                    .HasConstraintName("FK_Surveys_Comments");
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Surveys)

@@ -5,6 +5,11 @@ namespace MrPiattoWAPI.Model
 {
     public partial class Comments
     {
+        public Comments()
+        {
+            Surveys = new HashSet<Surveys>();
+        }
+
         public int Idcomment { get; set; }
         public int Idrestaurant { get; set; }
         public int Iduser { get; set; }
@@ -14,5 +19,6 @@ namespace MrPiattoWAPI.Model
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
         public virtual User IduserNavigation { get; set; }
+        public virtual ICollection<Surveys> Surveys { get; set; }
     }
 }
