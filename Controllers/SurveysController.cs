@@ -32,6 +32,15 @@ namespace MrPiattoWAPI.Controllers
                 results.Add(await _context.Surveys
                     .Where(s => s.Idrestaurant == id && s.GeneralScore >= i && s.GeneralScore < i + 1)
                     .CountAsync());
+            var sum = results.Sum();
+            if (sum != 0)
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    results[i] *= 100;
+                    results[i] /= sum;
+                }
+            }
             return results;
         }
 
