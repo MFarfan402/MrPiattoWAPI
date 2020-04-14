@@ -34,5 +34,19 @@ namespace MrPiattoWAPI.Controllers
 
             return restaurant;
         }
+
+        // GET: api/ResPolicies/5
+        [HttpGet("Policies/{idRes}")]
+        public async Task<ActionResult<Policies>> GetPolicies(int idRes)
+        {
+            var policies = await _context.Policies.Where(r => r.Idrestaurant == idRes).FirstAsync();
+
+            if (policies == null)
+            {
+                return NotFound();
+            }
+
+            return policies;
+        }
     }
 }
