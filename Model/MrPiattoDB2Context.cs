@@ -43,7 +43,7 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
             }
         }
 
@@ -507,6 +507,10 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.CoordenateX).HasColumnName("coordenateX");
 
                 entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
+
+                entity.Property(e => e.Type).HasColumnName("type");
+
+                entity.Property(e => e.Seats).HasColumnName("seats");
 
                 entity.Property(e => e.FloorName)
                     .IsRequired()
