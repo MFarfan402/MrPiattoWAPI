@@ -43,7 +43,8 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
             }
         }
 
@@ -360,6 +361,11 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Iduser).HasColumnName("IDUser");
 
+                entity.Property(e => e.Url)
+                    .HasColumnName("url")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.HasOne(d => d.IdtableNavigation)
                     .WithMany(p => p.Reservation)
                     .HasForeignKey(d => d.Idtable)
@@ -587,6 +593,8 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Idwaiter).HasColumnName("IDWaiter");
 
                 entity.Property(e => e.ServiceRating).HasColumnName("serviceRating");
+
+                entity.Property(e => e.GeneralScore).HasColumnName("generalScore");
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Surveys)

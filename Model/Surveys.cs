@@ -12,6 +12,7 @@ namespace MrPiattoWAPI.Model
         public double FoodRating { get; set; }
         public double ComfortRating { get; set; }
         public double ServiceRating { get; set; }
+        public double GeneralScore { get; set; }
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
         public virtual User IduserNavigation { get; set; }
