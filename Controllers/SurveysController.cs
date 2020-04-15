@@ -71,7 +71,8 @@ namespace MrPiattoWAPI.Controllers
         [HttpGet("Comments/{id}")]
         public async Task<ActionResult<IEnumerable<Surveys>>> GetSurveysComments(int id)
         {
-            return await _context.Surveys.Include(s => s.IdcommentNavigation)
+            return await _context.Surveys
+                .Include(s => s.IdcommentNavigation)
                 .Where(s => s.Idrestaurant == id && s.IdcommentNavigation.Status == "Aceptado")
                 .ToListAsync();
         }
