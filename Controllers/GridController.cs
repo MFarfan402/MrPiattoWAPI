@@ -35,5 +35,26 @@ namespace MrPiattoWAPI.Controllers
             return restaurantTables;
         }
 
+        [HttpGet("Floors/{idRes}")]
+        public async Task<ActionResult<Dictionary<int, string>>> GetFloors(int idRes)
+        {
+            Dictionary<int, string> dic = new Dictionary<int, string>();
+            var floorIndexes = _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).Select(f => f.FloorIndex).ToListAsync();
+            var restaurantTables = await _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).ToListAsync();
+            var groupedTables = restaurantTables.GroupBy(f => f.FloorIndex).Select(grp => grp.ToList()).ToList();
+
+            if (restaurantTables == null)
+            {
+                return NotFound();
+            }
+
+            foreach(var t in groupedTables)
+            {
+                dic.Add(t.FloorIndex, t.FloorName);
+            }
+
+            return dic;
+        }
+
     }
 }

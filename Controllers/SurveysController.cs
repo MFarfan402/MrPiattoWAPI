@@ -64,6 +64,18 @@ namespace MrPiattoWAPI.Controllers
             return results;
         }
 
+        // GET: api/Surveys/Comments/{idRestaurant}
+        // MAURICIO FARFAN
+        // Usuario -> RestaurantView -> Ver todas las reseñas
+        // Method used to get the scores and the comments of a restaurant.
+        [HttpGet("Comments/{id}")]
+        public async Task<ActionResult<IEnumerable<Surveys>>> GetSurveysComments(int id)
+        {
+            return await _context.Surveys.Include(s => s.IdcommentNavigation)
+                .Where(s => s.Idrestaurant == id && s.IdcommentNavigation.Status == "Aceptado")
+                .ToListAsync();
+        }
+
         // PUT: api/Surveys/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
