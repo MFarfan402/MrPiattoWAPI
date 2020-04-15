@@ -35,24 +35,35 @@ namespace MrPiattoWAPI.Controllers
             return restaurantTables;
         }
 
-        [HttpGet("Floors/{idRes}")]
-        public async Task<ActionResult<Dictionary<int, string>>> GetFloors(int idRes)
+        [HttpGet("TFloors/{idRes}/{idFloors}")]
+        public async Task<ActionResult<IEnumerable<RestaurantTables>>> GetTablesByFloors(int idRes, int idFloors)
         {
-            Dictionary<int, string> dic = new Dictionary<int, string>();
-            var floorIndexes = _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).Select(f => f.FloorIndex).ToListAsync();
-            var restaurantTables = await _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).ToListAsync();
-            var groupedTables = restaurantTables.GroupBy(f => f.FloorIndex).Select(grp => grp.ToList()).ToList();
+            var restaurantTables = await _context.RestaurantTables.Include(r => r.Reservation).Where(r => r.Idrestaurant == idRes && r.FloorIndex == idFloors).ToListAsync();
 
             if (restaurantTables == null)
             {
                 return NotFound();
             }
 
-            foreach(var t in groupedTables)
-            {
-                dic.Add(t.FloorIndex, t.FloorName);
-            }
+            return restaurantTables;
+        }
 
+        [HttpGet("Floors/{idRes}")]
+        public async Task<ActionResult<Dictionary<int, string>>> GetFloors(int idRes)
+        {
+            Dictionary<int, string> dic = new Dictionary<int, string>();
+            var floorIndexes = _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).Select(f => f.FloorIndex).Distinct().ToList();
+            
+
+            if (floorIndexes == null)
+            {
+                return NotFound();
+            }
+            foreach(var i in floorIndexes)
+            {
+                string s = _context.RestaurantTables.Where(r => r.Idrestaurant == idRes && r.FloorIndex == i).Select(f => f.FloorName).First();
+                dic.Add(i, s);
+            }
             return dic;
         }
 
