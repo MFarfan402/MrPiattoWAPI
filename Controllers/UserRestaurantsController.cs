@@ -25,19 +25,11 @@ namespace MrPiattoWAPI.Controllers
         // Usuario -> Favoritos
         // Method used to retrieve the information of a restaurant marked as favorite from a user.
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
+        public async Task<ActionResult<IEnumerable<UserRestaurant>>> GetUserFavorites(int id)
         {
             var restaurants = await _context.UserRestaurant
                 .Where(u => u.Iduser == id && u.Favorite == true)
-                .Select(u => u.IdrestaurantNavigation)
-                .Select(r => new Restaurant
-                {
-                    Idrestaurant = r.Idrestaurant,
-                    Name = r.Name,
-                    Address = r.Address,
-                    Score = r.Score,
-                    IdcategoriesNavigation = r.IdcategoriesNavigation
-                })
+                .Include(u => u.IdrestaurantNavigation)
                 .ToListAsync();
             if (restaurants == null)
                 return NotFound();
