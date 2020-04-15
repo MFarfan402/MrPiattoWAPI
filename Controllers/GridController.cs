@@ -52,7 +52,7 @@ namespace MrPiattoWAPI.Controllers
         public async Task<ActionResult<Dictionary<int, string>>> GetFloors(int idRes)
         {
             Dictionary<int, string> dic = new Dictionary<int, string>();
-            var floorIndexes = _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).Select(f => f.FloorIndex).Distinct().ToList();
+            var floorIndexes = await _context.RestaurantTables.Where(r => r.Idrestaurant == idRes).Select(f => f.FloorIndex).Distinct().ToListAsync();
             
 
             if (floorIndexes == null)
@@ -61,7 +61,7 @@ namespace MrPiattoWAPI.Controllers
             }
             foreach(var i in floorIndexes)
             {
-                string s = _context.RestaurantTables.Where(r => r.Idrestaurant == idRes && r.FloorIndex == i).Select(f => f.FloorName).First();
+                string s = await _context.RestaurantTables.Where(r => r.Idrestaurant == idRes && r.FloorIndex == i).Select(f => f.FloorName).FirstAsync();
                 dic.Add(i, s);
             }
             return dic;
