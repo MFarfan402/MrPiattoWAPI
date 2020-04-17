@@ -332,7 +332,7 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.MinTimeRes).HasColumnName("minTimeRes");
 
-                entity.Property(e => e.ModTime).HasColumnName("modTime");
+                entity.Property(e => e.ModTimeHours).HasColumnName("modTimeHours");
 
                 entity.Property(e => e.StrikeType).HasColumnName("strikeType");
 
@@ -342,9 +342,13 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.MinTimePer).HasColumnName("minTimePer");
 
-                entity.Property(e => e.ModTimePer).HasColumnName("modTimePer");
+                entity.Property(e => e.StrikeTypePer).HasColumnName("strikeTypePer");
 
                 entity.Property(e => e.MaxTimeArrPer).HasColumnName("maxTimeArrPer");
+
+                entity.Property(e => e.ModTimeDays).HasColumnName("modTimeDays");
+
+                entity.Property(e => e.ModTimeSeats).HasColumnName("modTimeSeats");
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Policies)

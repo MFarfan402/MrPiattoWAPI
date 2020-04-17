@@ -48,5 +48,19 @@ namespace MrPiattoWAPI.Controllers
 
             return policies;
         }
+
+        // GET: api/Grid/5
+        [HttpGet("Waiters/{idRes}")]
+        public async Task<ActionResult<IEnumerable<Waiters>>> GetWaiters(int idRes)
+        {
+            var waiters = await _context.Waiters.Where(r => r.Idrestaurant == idRes).ToListAsync();
+
+            if (waiters == null)
+            {
+                return NotFound();
+            }
+
+            return waiters;
+        }
     }
 }
