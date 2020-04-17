@@ -338,6 +338,14 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Strikes).HasColumnName("strikes");
 
+                entity.Property(e => e.MaxTimePer).HasColumnName("maxTimePer");
+
+                entity.Property(e => e.MinTimePer).HasColumnName("minTimePer");
+
+                entity.Property(e => e.ModTimePer).HasColumnName("modTimePer");
+
+                entity.Property(e => e.MaxTimeArrPer).HasColumnName("maxTimeArrPer");
+
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Policies)
                     .HasForeignKey(d => d.Idrestaurant)
