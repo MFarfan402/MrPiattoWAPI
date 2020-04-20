@@ -68,16 +68,66 @@ namespace MrPiattoWAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Reservations
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        // POST: api/Reservations?idRestaurant={}&idUser={}&dateTime={YYYY-MM-DD }
+        // MAURICIO FARFAN
+        // Usuario -> Mis Reservaciones
+        // Method used to retrieve the information of the future reservations of the client.
         [HttpPost]
-        public async Task<ActionResult<Reservation>> PostReservation(Reservation reservation)
+        public async Task<bool> PostReservation(int idRestaurant, int idUser, string dateTime, int amount)
         {
-            _context.Reservation.Add(reservation);
-            await _context.SaveChangesAsync();
+            DateTime date = Convert.ToDateTime(dateTime);
+            Reservation newReservation = new Reservation();
+            // Verify that the client can make a reservation in the restaurant.
+            var userReservations = _context.Reservation.Where(r => r.Iduser == idUser).ToList();
+            int counter = 0;
 
-            return CreatedAtAction("GetReservation", new { id = reservation.Idreservation }, reservation);
+            foreach(var userR in userReservations)
+            {
+                if (userR.Date.Date == date)
+                    counter++;
+                if (counter == 3)
+                    return false;
+            }
+            
+
+            // Verify the disponibility of a table in the restaurant.
+            var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == idRestaurant).ToList();
+            foreach(var table in tables)
+            {
+                var reservations = _context.Reservation
+                    .Where(r => r.Idtable == table.Idtables)
+                    .Select(r => r.Date)
+                    .ToList();
+                if (reservations == null)
+                {
+                    newReservation.Idtable = table.Idtables;
+                    newReservation.Iduser = idUser;
+                    newReservation.Date = date;
+                    newReservation.AmountOfPeople = amount;
+                    newReservation.Url = ".";
+                    _context.Reservation.Add(newReservation);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    foreach(var reservation in reservations)
+                    {
+                        if((date - reservation).TotalMinutes > 90)
+                        {
+                            newReservation.Idtable = table.Idtables;
+                            newReservation.Iduser = idUser;
+                            newReservation.Date = date;
+                            newReservation.AmountOfPeople = amount;
+                            newReservation.Url = ".";
+                            _context.Reservation.Add(newReservation);
+                            await _context.SaveChangesAsync();
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         // DELETE: api/Reservations/5
