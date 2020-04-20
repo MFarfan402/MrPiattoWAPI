@@ -14,6 +14,7 @@ namespace MrPiattoWAPI.Model
         public double AverageFriday { get; set; }
         public double AverageSaturday { get; set; }
         public double AverageSunday { get; set; }
+        public DateTime DateStatistics { get; set; }
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
     }

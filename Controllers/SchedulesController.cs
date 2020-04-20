@@ -43,6 +43,19 @@ namespace MrPiattoWAPI.Controllers
             return schedule.ToString();
         }
 
+        // MAURICIO FLORES
+        // Method used to get the schedule of a restaurant in json format
+        [HttpGet("Raw/{id}")]
+        public async Task<ActionResult<Schedule>> GetScheduleRaw(int id)
+        {
+            var schedule = await _context.Schedule.Where(s => s.Idrestaurant == id).FirstAsync();
+
+            if (schedule == null)
+                return NotFound();
+
+            return schedule;
+        }
+
         // PUT: api/Schedules/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.

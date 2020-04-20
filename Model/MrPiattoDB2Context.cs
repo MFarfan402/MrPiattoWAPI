@@ -160,6 +160,8 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.AverageWednesday).HasColumnName("averageWednesday");
 
+                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
+
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
@@ -222,6 +224,8 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Average2200).HasColumnName("average2200");
 
                 entity.Property(e => e.Average2300).HasColumnName("average2300");
+
+                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
