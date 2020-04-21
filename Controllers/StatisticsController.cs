@@ -23,9 +23,9 @@ namespace MrPiattoWAPI.Controllers
 
         // GET: api/ClientRes/5
         [HttpGet("Day/{idRes}")]
-        public async Task<ActionResult<DayStatistics>> GetDayStatistics(int idRes)
+        public async Task<ActionResult<IEnumerable<DayStatistics>>> GetDayStatistics(int idRes)
         {
-            var statistics = await _context.DayStatistics.Where(r => r.Idrestaurant == idRes).FirstAsync();
+            var statistics = await _context.DayStatistics.Where(r => r.Idrestaurant == idRes).ToListAsync();
 
             if (statistics == null)
             {
@@ -37,9 +37,9 @@ namespace MrPiattoWAPI.Controllers
 
         // GET: api/ClientRes/5
         [HttpGet("Hour/{idRes}")]
-        public async Task<ActionResult<HourStatistics>> GetHourStatistics(int idRes)
+        public async Task<ActionResult<IEnumerable<HourStatistics>>> GetHourStatistics(int idRes)
         {
-            var statistics = await _context.HourStatistics.Where(r => r.Idrestaurant == idRes).FirstAsync();
+            var statistics = await _context.HourStatistics.Where(r => r.Idrestaurant == idRes).ToListAsync();
 
             if (statistics == null)
             {
