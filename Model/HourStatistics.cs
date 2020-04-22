@@ -31,7 +31,7 @@ namespace MrPiattoWAPI.Model
         public double? Average2100 { get; set; }
         public double? Average2200 { get; set; }
         public double? Average2300 { get; set; }
-        public DateTime DateStatistics { get; set; }
+        public DateTime? DateStatistics { get; set; }
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
     }

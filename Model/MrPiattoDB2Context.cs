@@ -15,6 +15,8 @@ namespace MrPiattoWAPI.Model
         {
         }
 
+        public virtual DbSet<AuxiliarReservation> AuxiliarReservation { get; set; }
+        public virtual DbSet<AuxiliarTables> AuxiliarTables { get; set; }
         public virtual DbSet<Categories> Categories { get; set; }
         public virtual DbSet<Comments> Comments { get; set; }
         public virtual DbSet<Complaints> Complaints { get; set; }
@@ -50,6 +52,76 @@ namespace MrPiattoWAPI.Model
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AuxiliarReservation>(entity =>
+            {
+                entity.HasKey(e => e.IdauxiliarReservation);
+
+                entity.Property(e => e.IdauxiliarReservation).HasColumnName("IDAuxiliarReservation");
+
+                entity.Property(e => e.AmountOfPeople).HasColumnName("amountOfPeople");
+
+                entity.Property(e => e.Date)
+                    .HasColumnName("date")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IdauxiliarTable).HasColumnName("IDAuxiliarTable");
+
+                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+
+                entity.Property(e => e.ReservationStatus).HasColumnName("reservationStatus");
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasColumnName("url")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdauxiliarTableNavigation)
+                    .WithMany(p => p.AuxiliarReservation)
+                    .HasForeignKey(d => d.IdauxiliarTable)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AuxiliarReservation_AuxiliarTable");
+
+                entity.HasOne(d => d.IduserNavigation)
+                    .WithMany(p => p.AuxiliarReservation)
+                    .HasForeignKey(d => d.Iduser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AuxiliarReservation_User");
+            });
+
+            modelBuilder.Entity<AuxiliarTables>(entity =>
+            {
+                entity.HasKey(e => e.IdauxiliarTable)
+                    .HasName("PK_AuxiliarTable");
+
+                entity.Property(e => e.IdauxiliarTable).HasColumnName("IDAuxiliarTable");
+
+                entity.Property(e => e.AvarageUse).HasColumnName("avarageUse");
+
+                entity.Property(e => e.CoordenateX).HasColumnName("coordenateX");
+
+                entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
+
+                entity.Property(e => e.FloorName)
+                    .HasColumnName("floorName")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
+
+                entity.Property(e => e.StringIdtables)
+                    .IsRequired()
+                    .HasColumnName("stringIDTables")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdrestaurantNavigation)
+                    .WithMany(p => p.AuxiliarTables)
+                    .HasForeignKey(d => d.Idrestaurant)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AuxiliarTables_Restaurant");
+            });
+
             modelBuilder.Entity<Categories>(entity =>
             {
                 entity.HasKey(e => e.Idcategory);
@@ -160,7 +232,9 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.AverageWednesday).HasColumnName("averageWednesday");
 
-                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
+                entity.Property(e => e.DateStatistics)
+                    .HasColumnName("dateStatistics")
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
@@ -225,7 +299,9 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Average2300).HasColumnName("average2300");
 
-                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
+                entity.Property(e => e.DateStatistics)
+                    .HasColumnName("dateStatistics")
+                    .HasColumnType("datetime");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
 
@@ -332,27 +408,27 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.MaxTimeArr).HasColumnName("maxTimeArr");
 
-                entity.Property(e => e.MaxTimeRes).HasColumnName("maxTimeRes");
-
-                entity.Property(e => e.MinTimeRes).HasColumnName("minTimeRes");
-
-                entity.Property(e => e.ModTimeHours).HasColumnName("modTimeHours");
-
-                entity.Property(e => e.StrikeType).HasColumnName("strikeType");
-
-                entity.Property(e => e.Strikes).HasColumnName("strikes");
+                entity.Property(e => e.MaxTimeArrPer).HasColumnName("maxTimeArrPer");
 
                 entity.Property(e => e.MaxTimePer).HasColumnName("maxTimePer");
 
+                entity.Property(e => e.MaxTimeRes).HasColumnName("maxTimeRes");
+
                 entity.Property(e => e.MinTimePer).HasColumnName("minTimePer");
 
-                entity.Property(e => e.StrikeTypePer).HasColumnName("strikeTypePer");
-
-                entity.Property(e => e.MaxTimeArrPer).HasColumnName("maxTimeArrPer");
+                entity.Property(e => e.MinTimeRes).HasColumnName("minTimeRes");
 
                 entity.Property(e => e.ModTimeDays).HasColumnName("modTimeDays");
 
+                entity.Property(e => e.ModTimeHours).HasColumnName("modTimeHours");
+
                 entity.Property(e => e.ModTimeSeats).HasColumnName("modTimeSeats");
+
+                entity.Property(e => e.StrikeType).HasColumnName("strikeType");
+
+                entity.Property(e => e.StrikeTypePer).HasColumnName("strikeTypePer");
+
+                entity.Property(e => e.Strikes).HasColumnName("strikes");
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Policies)
@@ -530,13 +606,7 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.CoordenateY).HasColumnName("coordenateY");
 
-                entity.Property(e => e.Type).HasColumnName("type");
-
-                entity.Property(e => e.Seats).HasColumnName("seats");
-
                 entity.Property(e => e.FloorIndex).HasColumnName("floorIndex");
-
-                entity.Property(e => e.tableName).HasColumnName("tableName");
 
                 entity.Property(e => e.FloorName)
                     .IsRequired()
@@ -545,6 +615,23 @@ namespace MrPiattoWAPI.Model
                     .IsUnicode(false);
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
+
+                entity.Property(e => e.IsJoin).HasColumnName("isJoin");
+
+                entity.Property(e => e.Seats)
+                    .HasColumnName("seats")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TableName)
+                    .HasColumnName("tableName")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Type)
+                    .HasColumnName("type")
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.RestaurantTables)
@@ -606,6 +693,8 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.FoodRating).HasColumnName("foodRating");
 
+                entity.Property(e => e.GeneralScore).HasColumnName("generalScore");
+
                 entity.Property(e => e.Idcomment).HasColumnName("IDComment");
 
                 entity.Property(e => e.Idrestaurant).HasColumnName("IDRestaurant");
@@ -615,8 +704,6 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Idwaiter).HasColumnName("IDWaiter");
 
                 entity.Property(e => e.ServiceRating).HasColumnName("serviceRating");
-
-                entity.Property(e => e.GeneralScore).HasColumnName("generalScore");
 
                 entity.HasOne(d => d.IdcommentNavigation)
                     .WithMany(p => p.Surveys)

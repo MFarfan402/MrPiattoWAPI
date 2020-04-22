@@ -7,6 +7,7 @@ namespace MrPiattoWAPI.Model
     {
         public Restaurant()
         {
+            AuxiliarTables = new HashSet<AuxiliarTables>();
             Comments = new HashSet<Comments>();
             Complaints = new HashSet<Complaints>();
             DayStatistics = new HashSet<DayStatistics>();
@@ -44,6 +45,7 @@ namespace MrPiattoWAPI.Model
 
         public virtual Categories IdcategoriesNavigation { get; set; }
         public virtual PaymentOptions IdpaymentNavigation { get; set; }
+        public virtual ICollection<AuxiliarTables> AuxiliarTables { get; set; }
         public virtual ICollection<Comments> Comments { get; set; }
         public virtual ICollection<Complaints> Complaints { get; set; }
         public virtual ICollection<DayStatistics> DayStatistics { get; set; }
