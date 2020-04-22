@@ -76,7 +76,6 @@ namespace MrPiattoWAPI.Controllers
         [HttpPost]
         /*
          * ESTE ALGORITMO ESTÁ DÍFICIL DE EXPLICAR. POR LO QUE LO COMENTARÉ EN ESPAÑOL PARA NO MORIR A LA HORA DE DOCUMENTARLO:
-         * (Aun está incompleto pero es lo que se necesita por mientras,)
          * 1. Verificamos que el usuario no tenga más de 3 reservaciones activas.
          * 2. Verificamos que el usuario no esté bloqueado por el restaurante.
          * 3. Verificamos que el restaurante no esté bloqueado ese dia.
