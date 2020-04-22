@@ -68,61 +68,84 @@ namespace MrPiattoWAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Reservations?idRestaurant={}&idUser={}&dateTime={YYYY-MM-DD }
+        // POST: api/Reservations
         // MAURICIO FARFAN
-        // Usuario -> Mis Reservaciones
-        // Method used to retrieve the information of the future reservations of the client.
+        // RestaurantView -> Reserva una mesa -> Buscar ahora -> Confirmar Datos
+        // Method used to create a new reservation. It has the locks for the reservation. It retrieves if the reservations
+        // are created in a correct way.
         [HttpPost]
-        public async Task<bool> PostReservation(int idRestaurant, int idUser, string dateTime, int amount)
+        /*
+         * ESTE ALGORITMO ESTÁ DÍFICIL DE EXPLICAR. POR LO QUE LO COMENTARÉ EN ESPAÑOL PARA NO MORIR A LA HORA DE DOCUMENTARLO:
+         * (Aun está incompleto pero es lo que se necesita por mientras,)
+         * 1. Verificamos que el usuario no tenga más de 3 reservaciones activas.
+         * 2. Verificamos que el usuario no esté bloqueado por el restaurante.
+         * 3. Verificamos que el restaurante no esté bloqueado ese dia.
+         * 4. Buscamos las mesas correspondientes al restaurante.
+         * 5. Seleccionamos una mesa.
+         * 6. Verificamos que la mesa no este bloqueada para la fecha y hora de la reservación.
+         * 7. Buscamos todas las reservaciones que tiene esa mesa para ese día.
+         *      (Si no tiene insertamos registro)
+         * 8. Calculamos la diferencia con la reservación anterior que se tiene en esa mesa. Si es mayor a 2 horas insertamos registro.
+         * 9. Si la mesa esta ocupada, regresamos al paso 5, hasta finalizar con todas las mesas.
+         */
+        public async Task<bool> PostReservation(Reservation reservation)
         {
-            DateTime date = Convert.ToDateTime(dateTime);
-            Reservation newReservation = new Reservation();
-            // Verify that the client can make a reservation in the restaurant.
-            var userReservations = _context.Reservation.Where(r => r.Iduser == idUser).ToList();
-            int counter = 0;
+            // 1st step
+            var userReservations = _context.Reservation.Where(r => r.Iduser == reservation.Iduser
+            && r.Date > DateTime.Now).Count();
 
-            foreach(var userR in userReservations)
-            {
-                if (userR.Date.Date == date)
-                    counter++;
-                if (counter == 3)
-                    return false;
-            }
+            if (userReservations >= 3)
+                return false;
+
+            // 2nd step
+            var lockedUser = _context.LockedRestaurants.Where(l => l.Iduser == reservation.Iduser
+            && l.Idrestaurants == reservation.Idtable && l.UnlockedDate > DateTime.Now).Count();
+
+            if (lockedUser != 0)
+                return false;
+
+            // 3rd step
+            var lockedRes = _context.LockedHours.Where(l => l.Idrestaurant == reservation.Idtable
+            && l.StartDate <= reservation.Date && l.EndDate >= reservation.Date).Count();
+
+            if (lockedRes != 0)
+                return false;
+
+            // 4th step
+            var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == reservation.Idtable).ToList();
             
-
-            // Verify the disponibility of a table in the restaurant.
-            var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == idRestaurant).ToList();
+            List<Reservation> reservations;
+            // 5th step
             foreach(var table in tables)
             {
-                var reservations = _context.Reservation
-                    .Where(r => r.Idtable == table.Idtables)
-                    .Select(r => r.Date)
+                // 6th step
+                var lockedTable = _context.LockedTables.Where(t => t.Idtables == table.Idtables &&
+                t.StartDate <= reservation.Date && t.EndDate >= reservation.Date).Count();
+                if (lockedTable == 0)
+                {
+                    // 7th step
+                    reservations = _context.Reservation
+                    .Where(r => r.Idtable == table.Idtables && r.Date.Date == reservation.Date.Date)
                     .ToList();
-                if (reservations == null)
-                {
-                    newReservation.Idtable = table.Idtables;
-                    newReservation.Iduser = idUser;
-                    newReservation.Date = date;
-                    newReservation.AmountOfPeople = amount;
-                    newReservation.Url = ".";
-                    _context.Reservation.Add(newReservation);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-                else
-                {
-                    foreach(var reservation in reservations)
+                    if (reservations.Count == 0)
                     {
-                        if((date - reservation).TotalMinutes > 90)
+                        reservation.Idtable = table.Idtables;
+                        _context.Reservation.Add(reservation);
+                        await _context.SaveChangesAsync();
+                        return true;
+                    }
+                    else
+                    {
+                        foreach (var res in reservations)
                         {
-                            newReservation.Idtable = table.Idtables;
-                            newReservation.Iduser = idUser;
-                            newReservation.Date = date;
-                            newReservation.AmountOfPeople = amount;
-                            newReservation.Url = ".";
-                            _context.Reservation.Add(newReservation);
-                            await _context.SaveChangesAsync();
-                            return true;
+                            // 8th step
+                            if ((reservation.Date - res.Date).TotalMinutes > 119)
+                            {
+                                reservation.Idtable = table.Idtables;
+                                _context.Reservation.Add(reservation);
+                                await _context.SaveChangesAsync();
+                                return true;
+                            }
                         }
                     }
                 }
