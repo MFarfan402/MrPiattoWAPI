@@ -90,28 +90,28 @@ namespace MrPiattoWAPI.Controllers
          *  
          *  5. Si no existen registros de mesas grandes es hora de pegar mesas.
          */
-        public async Task<bool> PostReservation(Reservation reservation)
+        public async Task<string> PostReservation(Reservation reservation)
         {
             // 1st step
             var userReservations = _context.Reservation.Where(r => r.Iduser == reservation.Iduser
             && r.Date > DateTime.Now).Count();
 
             if (userReservations >= 3)
-                return false;
+                return "Ya tienes muchas reservaciones activas.";
 
             // 2nd step
             var lockedUser = _context.LockedRestaurants.Where(l => l.Iduser == reservation.Iduser
             && l.Idrestaurants == reservation.Idtable && l.UnlockedDate > DateTime.Now).Count();
 
             if (lockedUser != 0)
-                return false;
+                return "Estas penalizado por el restaurante.";
 
             // 3rd step
             var lockedRes = _context.LockedHours.Where(l => l.Idrestaurant == reservation.Idtable
             && l.StartDate <= reservation.Date && l.EndDate >= reservation.Date).Count();
 
             if (lockedRes != 0)
-                return false;
+                return "El restaurante no admite reservaciones para esa fecha.";
 
             // 4th step
             var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == reservation.Idtable
@@ -119,7 +119,7 @@ namespace MrPiattoWAPI.Controllers
             
             List<Reservation> reservations;
 
-            if (tables != null)
+            if (tables.Count() != 0)
             {
                 // 4.1
                 foreach (var table in tables)
@@ -138,7 +138,7 @@ namespace MrPiattoWAPI.Controllers
                             reservation.Idtable = table.Idtables;
                             _context.Reservation.Add(reservation);
                             await _context.SaveChangesAsync();
-                            return true;
+                            return "Tu reservación se ha generado con éxito.";
                         }
                         else
                         {
@@ -151,7 +151,7 @@ namespace MrPiattoWAPI.Controllers
                                         reservation.Idtable = table.Idtables;
                                         _context.Reservation.Add(reservation);
                                         await _context.SaveChangesAsync();
-                                        return true;
+                                        return "Tu reservación se ha generado con éxito.";
                                     }
                                     else { i = -1; }
                                 }
@@ -164,7 +164,7 @@ namespace MrPiattoWAPI.Controllers
                                             reservation.Idtable = table.Idtables;
                                             _context.Reservation.Add(reservation);
                                             await _context.SaveChangesAsync();
-                                            return true;
+                                            return "Tu reservación se ha generado con éxito.";
                                         }
                                         else { i = 0; }
                                     }
@@ -173,11 +173,9 @@ namespace MrPiattoWAPI.Controllers
                         }
                     }
                 }
+                return "No hay disponibilidad para este horario";
             }
-
-            // SI HA LLEGADO HASTA AQUI ES POR QUE 
-            
-            return false;
+            return "Favor de contactar al restaurante para hacer la reservación.";
         }
 
         // DELETE: api/Reservations/5
