@@ -23,10 +23,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Utils" Version="3.1.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 

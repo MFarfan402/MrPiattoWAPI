@@ -14,6 +14,7 @@ namespace MrPiattoWAPI.Model
         public double ServiceRating { get; set; }
         public double GeneralScore { get; set; }
         public int? Idcomment { get; set; }
+        public DateTime DateStatistics { get; set; }
 
         public virtual Comments IdcommentNavigation { get; set; }
         public virtual Restaurant IdrestaurantNavigation { get; set; }

@@ -35,6 +35,7 @@ namespace MrPiattoWAPI.Model
         public virtual DbSet<Schedule> Schedule { get; set; }
         public virtual DbSet<Surveys> Surveys { get; set; }
         public virtual DbSet<TableDistribution> TableDistribution { get; set; }
+        public virtual DbSet<TableStatistics> TableStatistics { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserPhotos> UserPhotos { get; set; }
         public virtual DbSet<UserRestaurant> UserRestaurant { get; set; }
@@ -45,8 +46,8 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
-                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
             }
         }
 
@@ -703,6 +704,8 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.ServiceRating).HasColumnName("serviceRating");
 
+                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
+
                 entity.HasOne(d => d.IdcommentNavigation)
                     .WithMany(p => p.Surveys)
                     .HasForeignKey(d => d.Idcomment)
@@ -749,6 +752,35 @@ namespace MrPiattoWAPI.Model
                     .HasForeignKey(d => d.Idtables)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_TableDistribution_RestaurantTables");
+            });
+
+            modelBuilder.Entity<TableStatistics>(entity =>
+            {
+                entity.HasKey(e => e.IDTableStatistics);
+
+                entity.Property(e => e.IDTableStatistics).HasColumnName("IDTableStatistics");
+
+                entity.Property(e => e.IDRestaurant).HasColumnName("IDRestaurant");
+
+                entity.Property(e => e.IDTable).HasColumnName("IDTable");
+
+                entity.Property(e => e.AvarageUse).HasColumnName("avarageUse"); 
+
+                entity.Property(e => e.DateStatistics)
+                    .HasColumnName("dateStatistics")
+                    .HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdrestaurantNavigation)
+                    .WithMany(p => p.TableStatistics)
+                    .HasForeignKey(d => d.IDRestaurant)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TableStatistics_Restaurant");
+
+                entity.HasOne(d => d.IdrestaurantTablesNavigation)
+                    .WithMany(p => p.TableStatistics)
+                    .HasForeignKey(d => d.IDTable)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TableStatistics_RestaurantTables");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -906,6 +938,8 @@ namespace MrPiattoWAPI.Model
                     .HasColumnName("waiterLasName")
                     .HasMaxLength(25)
                     .IsUnicode(false);
+
+                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
 
                 entity.Property(e => e.WaiterRating).HasColumnName("waiterRating");
 

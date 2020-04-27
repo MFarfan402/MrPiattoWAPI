@@ -28,5 +28,6 @@ namespace MrPiattoWAPI.Model
         public virtual ICollection<LockedTables> LockedTables { get; set; }
         public virtual ICollection<Reservation> Reservation { get; set; }
         public virtual ICollection<TableDistribution> TableDistribution { get; set; }
+        public virtual ICollection<TableStatistics> TableStatistics { get; set; }
     }
 }

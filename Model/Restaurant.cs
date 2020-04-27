@@ -58,6 +58,7 @@ namespace MrPiattoWAPI.Model
         public virtual ICollection<RestaurantTables> RestaurantTables { get; set; }
         public virtual ICollection<Schedule> Schedule { get; set; }
         public virtual ICollection<Surveys> Surveys { get; set; }
+        public virtual ICollection<TableStatistics> TableStatistics { get; set; }
         public virtual ICollection<UserPhotos> UserPhotos { get; set; }
         public virtual ICollection<UserRestaurant> UserRestaurant { get; set; }
         public virtual ICollection<Waiters> Waiters { get; set; }
