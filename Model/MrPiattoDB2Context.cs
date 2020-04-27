@@ -619,9 +619,7 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.IsJoin).HasColumnName("isJoin");
 
                 entity.Property(e => e.Seats)
-                    .HasColumnName("seats")
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasColumnName("seats");
 
                 entity.Property(e => e.TableName)
                     .HasColumnName("tableName")

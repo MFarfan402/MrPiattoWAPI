@@ -79,13 +79,16 @@ namespace MrPiattoWAPI.Controllers
          * 1. Verificamos que el usuario no tenga más de 3 reservaciones activas.
          * 2. Verificamos que el usuario no esté bloqueado por el restaurante.
          * 3. Verificamos que el restaurante no esté bloqueado ese dia.
-         * 4. Buscamos las mesas correspondientes al restaurante.
-         * 5. Seleccionamos una mesa.
-         * 6. Verificamos que la mesa no este bloqueada para la fecha y hora de la reservación.
-         * 7. Buscamos todas las reservaciones que tiene esa mesa para ese día.
+         * 4. Buscamos las mesas correspondientes al restaurante que tengan la capacidad de sillas necesarias para el grupo de personas.
+         *  4.1. Si encontramos mesas así: seleccionamos una mesa.
+         *  4.2. Verificamos que la mesa no este bloqueada para la fecha y hora de la reservación.
+         *  4.3. Buscamos todas las reservaciones que tiene esa mesa para ese día ordenadas de mayor a menor hora.
          *      (Si no tiene insertamos registro)
-         * 8. Calculamos la diferencia con la reservación anterior que se tiene en esa mesa. Si es mayor a 2 horas insertamos registro.
-         * 9. Si la mesa esta ocupada, regresamos al paso 5, hasta finalizar con todas las mesas.
+         *  4.4. Calculamos la diferencia con la reservación anterior que se tiene en esa mesa. Si es mayor a 2 horas insertamos registro.
+         *  Si la mesa esta ocupada, regresamos al paso 4.1, hasta finalizar con todas las mesas. En caso de que no encuentre mesa es porque
+         *  las mesas de esa dimensión no estaban disponibles para esa hora.
+         *  
+         *  5. Si no existen registros de mesas grandes es hora de pegar mesas.
          */
         public async Task<bool> PostReservation(Reservation reservation)
         {
@@ -111,44 +114,69 @@ namespace MrPiattoWAPI.Controllers
                 return false;
 
             // 4th step
-            var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == reservation.Idtable).ToList();
+            var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == reservation.Idtable
+            && t.Seats >= reservation.AmountOfPeople).ToList();
             
             List<Reservation> reservations;
-            // 5th step
-            foreach(var table in tables)
+
+            if (tables != null)
             {
-                // 6th step
-                var lockedTable = _context.LockedTables.Where(t => t.Idtables == table.Idtables &&
-                t.StartDate <= reservation.Date && t.EndDate >= reservation.Date).Count();
-                if (lockedTable == 0)
+                // 4.1
+                foreach (var table in tables)
                 {
-                    // 7th step
-                    reservations = _context.Reservation
-                    .Where(r => r.Idtable == table.Idtables && r.Date.Date == reservation.Date.Date)
-                    .ToList();
-                    if (reservations.Count == 0)
+                    // 4.2
+                    var lockedTable = _context.LockedTables.Where(t => t.Idtables == table.Idtables &&
+                    t.StartDate <= reservation.Date && t.EndDate >= reservation.Date).Count();
+                    if (lockedTable == 0)
                     {
-                        reservation.Idtable = table.Idtables;
-                        _context.Reservation.Add(reservation);
-                        await _context.SaveChangesAsync();
-                        return true;
-                    }
-                    else
-                    {
-                        foreach (var res in reservations)
+                        // 4.3
+                        reservations = _context.Reservation
+                        .Where(r => r.Idtable == table.Idtables && r.Date.Date == reservation.Date.Date).OrderBy(r => r.Date)
+                        .ToList();
+                        if (reservations.Count == 0)
                         {
-                            // 8th step
-                            if ((reservation.Date - res.Date).TotalMinutes > 119)
+                            reservation.Idtable = table.Idtables;
+                            _context.Reservation.Add(reservation);
+                            await _context.SaveChangesAsync();
+                            return true;
+                        }
+                        else
+                        {
+                            for(int i = reservations.Count - 1; i >= 0; i--)
                             {
-                                reservation.Idtable = table.Idtables;
-                                _context.Reservation.Add(reservation);
-                                await _context.SaveChangesAsync();
-                                return true;
+                                if (reservation.Date > reservations[i].Date)
+                                {
+                                    if ((reservation.Date - reservations[i].Date).TotalMinutes > 119)
+                                    {
+                                        reservation.Idtable = table.Idtables;
+                                        _context.Reservation.Add(reservation);
+                                        await _context.SaveChangesAsync();
+                                        return true;
+                                    }
+                                    else { i = -1; }
+                                }
+                                else
+                                {
+                                    if (i == 0)
+                                    {
+                                        if ((reservations[i].Date - reservation.Date).TotalMinutes > 119)
+                                        {
+                                            reservation.Idtable = table.Idtables;
+                                            _context.Reservation.Add(reservation);
+                                            await _context.SaveChangesAsync();
+                                            return true;
+                                        }
+                                        else { i = 0; }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+
+            // SI HA LLEGADO HASTA AQUI ES POR QUE 
+            
             return false;
         }
 
