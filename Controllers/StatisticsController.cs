@@ -48,5 +48,19 @@ namespace MrPiattoWAPI.Controllers
 
             return statistics;
         }
+
+        // GET: api/ClientRes/5
+        [HttpGet("Table/{idRes}")]
+        public async Task<ActionResult<IEnumerable<TableStatistics>>> GetTableStatistics(int idRes)
+        {
+            var statistics = await _context.TableStatistics.Where(r => r.IDRestaurant == idRes).ToListAsync();
+
+            if (statistics == null)
+            {
+                return NotFound();
+            }
+
+            return statistics;
+        }
     }
 }
