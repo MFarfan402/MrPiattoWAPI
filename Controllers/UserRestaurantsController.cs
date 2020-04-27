@@ -70,16 +70,28 @@ namespace MrPiattoWAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/UserRestaurants
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        // POST: api/userRestaurants
+        // MAURICIO FARFAN
+        // Usuario -> RestaruantView -> Hamburguer -> Añadir a favoritos
+        // Method used to retrieve the information of a restaurant marked as favorite from a user.
         [HttpPost]
-        public async Task<ActionResult<UserRestaurant>> PostUserRestaurant(UserRestaurant userRestaurant)
+        public async Task<string> PostUserRestaurant(UserRestaurant userRestaurant)
         {
-            _context.UserRestaurant.Add(userRestaurant);
-            await _context.SaveChangesAsync();
+            var restaurant = await _context.UserRestaurant
+                .Where(u => u.Iduser == userRestaurant.Iduser && u.Idrestaurant == userRestaurant.Idrestaurant).FirstAsync();
 
-            return CreatedAtAction("GetUserRestaurant", new { id = userRestaurant.IduserRestaurant }, userRestaurant);
+            if (restaurant == null)
+            {
+                _context.UserRestaurant.Add(userRestaurant);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                restaurant.Favorite = true;
+                _context.UserRestaurant.Update(restaurant);
+                await _context.SaveChangesAsync();
+            }
+            return "Restaurante agregado a favoritos";
         }
 
         // DELETE: api/UserRestaurants/5

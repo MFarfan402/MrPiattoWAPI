@@ -23,5 +23,18 @@ namespace MrPiattoWAPI.Model
         public TimeSpan? Ctsunday { get; set; }
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
+
+        // MAURICIO FARFAN
+        // Method used to convert to string the schedule. Called in SchedulesController.
+        public override string ToString()
+        {
+            return $"L: {Otmonday.ToString()} - {Ctmonday.ToString()}\n" +
+                $"M: {Ottuesday.ToString()} - {Cttuestday.ToString()}\n" +
+                $"M: {Otwednesday.ToString()} - {Ctwednesday.ToString()}\n" +
+                $"J: {Otthursday.ToString()} - {Ctthursday.ToString()}\n" +
+                $"V: {Otfriday.ToString()} - {Ctfriday.ToString()}\n" +
+                $"S: {Otsaturday.ToString()} - {Ctsaturday.ToString()}\n" +
+                $"D: {Otsunday.ToString()} - {Ctsunday.ToString()}\n";
+        }
     }
 }
