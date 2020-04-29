@@ -29,7 +29,8 @@ namespace MrPiattoWAPI.Controllers
         {
             var reservations = await _context.Reservation
                 .Where(r => r.Iduser == id && r.Date > DateTime.Now)
-                .Include(res => res.IdtableNavigation).ThenInclude(r => r.IdrestaurantNavigation).ToListAsync();
+                .Include(res => res.IdtableNavigation).ThenInclude(r => r.IdrestaurantNavigation)
+                .Include(u => u.IduserNavigation).ToListAsync();
             if (reservations == null)
                 return NotFound();
             return reservations;
