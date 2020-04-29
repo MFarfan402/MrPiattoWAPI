@@ -29,8 +29,23 @@ namespace MrPiattoWAPI.Controllers
         {
             var reservations = await _context.Reservation
                 .Where(r => r.Iduser == id && r.Date > DateTime.Now)
-                .Include(res => res.IdtableNavigation).ThenInclude(r => r.IdrestaurantNavigation)
-                .Include(u => u.IduserNavigation).ToListAsync();
+                .Include(res => res.IdtableNavigation).ThenInclude(r => r.IdrestaurantNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Restaurante -> Mis Reservaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Res/{id}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetReservationRes(int id)
+        {
+            var reservations = await _context.Reservation
+                .Where(r => r.IdtableNavigation.IdrestaurantNavigation.Idrestaurant == id && r.Date > DateTime.Now)
+                .Include(u => u.IduserNavigation)
+                .Include(t => t.IdtableNavigation).ToListAsync();
             if (reservations == null)
                 return NotFound();
             return reservations;
