@@ -63,6 +63,20 @@ namespace MrPiattoWAPI.Controllers
             return statistics;
         }
 
+        // GET: api/Grid/5
+        [HttpGet("Waiters/{idRes}")]
+        public async Task<ActionResult<IEnumerable<WaiterStatistics>>> GetWaitersStats(int idRes)
+        {
+            var waiters = await _context.WaiterStatistics.Where(r => r.IdwaitersNavigation.Idrestaurant == idRes).ToListAsync();
+
+            if (waiters == null)
+            {
+                return NotFound();
+            }
+
+            return waiters;
+        }
+
         // GET: api/ClientRes/5
         [HttpGet("Survey/{idRes}")]
         public async Task<ActionResult<IEnumerable<Surveys>>> GetSurveys(int idRes)

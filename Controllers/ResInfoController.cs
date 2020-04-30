@@ -122,7 +122,7 @@ namespace MrPiattoWAPI.Controllers
         [HttpGet("Waiters/{idRes}")]
         public async Task<ActionResult<IEnumerable<Waiters>>> GetWaiters(int idRes)
         {
-            var waiters = await _context.Waiters.Where(r => r.Idrestaurant == idRes).ToListAsync();
+            var waiters = await _context.Waiters.Where(r => r.Idrestaurant == idRes).Include(w => w.WaiterStatistics).ToListAsync();
 
             if (waiters == null)
             {

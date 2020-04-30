@@ -41,6 +41,7 @@ namespace MrPiattoWAPI.Model
         public virtual DbSet<UserRestaurant> UserRestaurant { get; set; }
         public virtual DbSet<UserStrikes> UserStrikes { get; set; }
         public virtual DbSet<Waiters> Waiters { get; set; }
+        public virtual DbSet<WaiterStatistics> WaiterStatistics { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -939,15 +940,30 @@ namespace MrPiattoWAPI.Model
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
-                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
-
-                entity.Property(e => e.WaiterRating).HasColumnName("waiterRating");
-
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.Waiters)
                     .HasForeignKey(d => d.Idrestaurant)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Waiters_Restaurant");
+            });
+
+            modelBuilder.Entity<WaiterStatistics>(entity =>
+            {
+                entity.HasKey(e => e.IdwaiterStatistics);
+
+                entity.Property(e => e.IdwaiterStatistics).HasColumnName("IDWaiterStatistics");
+
+                entity.Property(e => e.Idwaiter).HasColumnName("IDWaiter");
+
+                entity.Property(e => e.Rating).HasColumnName("rating");
+
+                entity.Property(e => e.DateStatistics).HasColumnName("dateStatistics");
+
+                entity.HasOne(d => d.IdwaitersNavigation)
+                    .WithMany(p => p.WaiterStatistics)
+                    .HasForeignKey(d => d.Idwaiter)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WaiterStatistics_Waiter");
             });
 
             OnModelCreatingPartial(modelBuilder);
