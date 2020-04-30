@@ -35,6 +35,41 @@ namespace MrPiattoWAPI.Controllers
             return restaurant;
         }
 
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to update restaurant data
+        [HttpPost]
+        public async Task<string> PostRestaurant(Restaurant restaurant)
+        {
+            try
+            {
+                var res = await _context.Restaurant
+                    .Where(i => i.Idrestaurant == restaurant.Idrestaurant).FirstAsync();
+
+                res.Mail = restaurant.Mail;
+                res.Password = restaurant.Password;
+                res.Confirmation = restaurant.Confirmation;
+                res.LastLogin = restaurant.LastLogin;
+                res.Name = restaurant.Name;
+                res.Description = restaurant.Description;
+                res.Address = restaurant.Address;
+                res.Phone = restaurant.Phone;
+                res.Dress = restaurant.Dress;
+                res.Price = restaurant.Price;
+                res.Score = restaurant.Score;
+                res.SeverityLevel = restaurant.SeverityLevel;
+                res.Long = restaurant.Long;
+                res.Lat = restaurant.Lat;
+                await _context.SaveChangesAsync();
+
+                return "Restaurante actualizado";
+
+            } catch
+            {
+                return "Error. No existe el restaurante";
+            }
+        }
+
         // GET: api/ResPolicies/5
         [HttpGet("Policies/{idRes}")]
         public async Task<ActionResult<Policies>> GetPolicies(int idRes)

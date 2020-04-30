@@ -25,6 +25,27 @@ namespace MrPiattoWAPI.Model
             Waiters = new HashSet<Waiters>();
         }
 
+        public Restaurant(Restaurant restaurant)
+        {
+            Idrestaurant = restaurant.Idrestaurant;
+            Mail = restaurant.Mail;
+            Password = restaurant.Password;
+            Confirmation = restaurant.Confirmation;
+            LastLogin = restaurant.LastLogin;
+            Name = restaurant.Name;
+            Description = restaurant.Description;
+            Address = restaurant.Address;
+            Phone = restaurant.Phone;
+            Dress = restaurant.Dress;
+            Price = restaurant.Price;
+            Score = restaurant.Score;
+            SeverityLevel = restaurant.SeverityLevel;
+            Long = restaurant.Long;
+            Lat = restaurant.Lat;
+            Idcategories = restaurant.Idcategories;
+            Idpayment = restaurant.Idpayment;
+        }
+
         public int Idrestaurant { get; set; }
         public string Mail { get; set; }
         public string Password { get; set; }
