@@ -100,6 +100,42 @@ namespace MrPiattoWAPI.Controllers
             return CreatedAtAction("GetSchedule", new { id = schedule.Idschedule }, schedule);
         }
 
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to update restaurant data
+        [HttpPost("Update")]
+        public async Task<string> PostUpdateSchedule(Schedule schedule)
+        {
+            try
+            {
+                var res = await _context.Schedule
+                    .Where(i => i.Idschedule == schedule.Idschedule).FirstAsync();
+
+                res.Otmonday = schedule.Otmonday;
+                res.Ctmonday = schedule.Ctmonday;
+                res.Ottuesday = schedule.Ottuesday;
+                res.Cttuestday = schedule.Cttuestday;
+                res.Otwednesday = schedule.Otwednesday;
+                res.Ctwednesday = schedule.Ctwednesday;
+                res.Otthursday = schedule.Otthursday;
+                res.Ctthursday = schedule.Ctthursday;
+                res.Otfriday = schedule.Otfriday;
+                res.Ctfriday = schedule.Ctfriday;
+                res.Otsaturday = schedule.Otsaturday;
+                res.Ctsaturday = schedule.Ctsaturday;
+                res.Otsunday = schedule.Otsunday;
+                res.Ctsunday = schedule.Ctsunday;
+                await _context.SaveChangesAsync();
+
+                return "Horario actualizado";
+
+            }
+            catch
+            {
+                return "Error. No existe el horario en el restuarante";
+            }
+        }
+
         // DELETE: api/Schedules/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Schedule>> DeleteSchedule(int id)

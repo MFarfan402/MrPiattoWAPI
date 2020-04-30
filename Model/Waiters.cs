@@ -14,8 +14,8 @@ namespace MrPiattoWAPI.Model
         public int Idrestaurant { get; set; }
         public string WaiterFirstName { get; set; }
         public string WaiterLasName { get; set; }
-        public double WaiterRating { get; set; }
-        public DateTime DateStatistics { get; set; }
+        public double? WaiterRating { get; set; }
+        public DateTime? DateStatistics { get; set; }
 
         public virtual Restaurant IdrestaurantNavigation { get; set; }
         public virtual ICollection<Surveys> Surveys { get; set; }
