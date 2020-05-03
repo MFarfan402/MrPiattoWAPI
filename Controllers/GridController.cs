@@ -89,17 +89,17 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO ANDRES
         // Method used to add a table
         [HttpPost("UpdateTable")]
-        public async Task<string> UpdateRestaurant(RestaurantTables restaurant)
+        public async Task<string> UpdateRestaurant(RestaurantTables table)
         {
             try
             {
                 var res = await _context.RestaurantTables
-                    .Where(i => i.Idtables == restaurant.Idtables).FirstAsync();
+                    .Where(i => i.Idtables == table.Idtables).FirstAsync();
 
-                res.CoordenateX = restaurant.CoordenateX;
-                res.CoordenateY = restaurant.CoordenateY;
-                res.Seats = restaurant.Seats;
-                res.TableName = restaurant.TableName;
+                res.CoordenateX = table.CoordenateX;
+                res.CoordenateY = table.CoordenateY;
+                res.Seats = table.Seats;
+                res.TableName = table.TableName;
 
                 await _context.SaveChangesAsync();
                 return "Base de datos actualizada";
