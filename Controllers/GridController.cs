@@ -67,5 +67,81 @@ namespace MrPiattoWAPI.Controllers
             return dic;
         }
 
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to add a table
+        [HttpPost]
+        public async Task<string> AddRestaurant(RestaurantTables restaurant)
+        {
+            try
+            {
+                _context.RestaurantTables.Add(restaurant);
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to add a table
+        [HttpPost("UpdateTable")]
+        public async Task<string> UpdateRestaurant(RestaurantTables restaurant)
+        {
+            try
+            {
+                var res = await _context.RestaurantTables
+                    .Where(i => i.Idtables == restaurant.Idtables).FirstAsync();
+
+                res.CoordenateX = restaurant.CoordenateX;
+                res.CoordenateY = restaurant.CoordenateY;
+                res.Seats = restaurant.Seats;
+                res.TableName = restaurant.TableName;
+
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // DELETE: api/Schedules/5
+        [HttpDelete("{id}")]
+        public async Task<string> DeleteTable(int id)
+        {
+            try
+            {
+                var reservations = await _context.Reservation.Where(i => i.Idtable == id).ToListAsync();
+                if (reservations.Any())
+                {
+                    return "No se puede Eliminar. La mesa posee reservaciones";
+                }
+
+                // Eliminar sus estadisticas
+                var stats = await _context.TableStatistics.Where(i => i.IDTable == id).ToListAsync();
+
+                foreach (TableStatistics t in stats)
+                {
+                    _context.TableStatistics.Remove(t);
+                    await _context.SaveChangesAsync();
+                }
+
+                // Eliminamos la mesa
+                var res = await _context.RestaurantTables.Where(i => i.Idrestaurant == id).FirstAsync();
+                _context.RestaurantTables.Remove(res);
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
     }
 }

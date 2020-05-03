@@ -131,5 +131,46 @@ namespace MrPiattoWAPI.Controllers
 
             return waiters;
         }
+
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to add a waiter
+        [HttpPost("Waiters/Add")]
+        public async Task<string> AddWaiter(Waiters waiter)
+        {
+            try
+            {
+                _context.Waiters.Add(waiter);
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to add a table
+        [HttpPost("Waiters/Update")]
+        public async Task<string> UpdateWaiter(Waiters waiter)
+        {
+            try
+            {
+                var res = await _context.Waiters
+                    .Where(i => i.Idwaiter == waiter.Idwaiter).FirstAsync();
+
+                res.WaiterFirstName = waiter.WaiterFirstName;
+                res.WaiterLasName = waiter.WaiterLasName;
+
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
     }
 }

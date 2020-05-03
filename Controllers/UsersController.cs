@@ -23,16 +23,16 @@ namespace MrPiattoWAPI.Controllers
         // POST: api/Users
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<User> PostUser(User user)
-        {
-            var u = await _context.User.Where(u => u.Mail == user.Mail && u.Password == u.Password).FirstOrDefaultAsync();
+        //[HttpPost]
+        //public async Task<User> PostUser(User user)
+        //{
+        //    var u = await _context.User.Where(u => u.Mail == user.Mail && u.Password == u.Password).FirstOrDefaultAsync();
 
-            if(user == null)
-            {
-                return new User();
-            }
-            return u;
-        }
+        //    if (user == null)
+        //    {
+        //        return new User();
+        //    }
+        //    return u;
+        //}
     }
 }
