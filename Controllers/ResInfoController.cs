@@ -140,7 +140,13 @@ namespace MrPiattoWAPI.Controllers
         {
             try
             {
-                _context.Waiters.Add(waiter);
+                Waiters auxWaiter = new Waiters();
+
+                auxWaiter.Idrestaurant = waiter.Idrestaurant;
+                auxWaiter.WaiterFirstName = waiter.WaiterFirstName;
+                auxWaiter.WaiterLasName = waiter.WaiterLasName;
+
+                _context.Waiters.Add(auxWaiter);
                 await _context.SaveChangesAsync();
                 return "Base de datos actualizada";
             }

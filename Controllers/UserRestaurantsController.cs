@@ -24,27 +24,27 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO FARFAN
         // Usuario -> Favoritos
         // Method used to retrieve the information of a restaurant marked as favorite from a user.
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
-        {
-            List<Restaurant> favorites = new List<Restaurant>();
-            var restaurants = await _context.UserRestaurant
-                .Where(u => u.Iduser == id && u.Favorite == true)
-                .Select(id => new UserRestaurant
-                { Idrestaurant = id.Idrestaurant })
-                .ToListAsync();
-            foreach (var r in restaurants)
-            {
-                favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
-                    .Include(y => y.IdcategoriesNavigation)
-                    .FirstOrDefault());
-            }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
+        //{
+        //    List<Restaurant> favorites = new List<Restaurant>();
+        //    var restaurants = await _context.UserRestaurant
+        //        .Where(u => u.Iduser == id && u.Favorite == true)
+        //        .Select(id => new UserRestaurant
+        //        { Idrestaurant = id.Idrestaurant })
+        //        .ToListAsync();
+        //    foreach (var r in restaurants)
+        //    {
+        //        favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
+        //            .Include(y => y.IdcategoriesNavigation)
+        //            .FirstOrDefault());
+        //    }
 
-            if (restaurants == null)
-                return NotFound();
+        //    if (restaurants == null)
+        //        return NotFound();
 
-            return favorites;
-        }
+        //    return favorites;
+        //}
 
 
     // PUT: api/UserRestaurants/5
