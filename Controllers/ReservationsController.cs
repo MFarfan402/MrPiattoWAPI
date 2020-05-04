@@ -167,7 +167,7 @@ namespace MrPiattoWAPI.Controllers
                                         reservation.Idtable = table.Idtables;
                                         _context.Reservation.Add(reservation);
                                         await _context.SaveChangesAsync();
-                                        return "Tu reservación se ha generado con éxito.";
+                                        return "Tu reservación se ha generado con éxito. ";
                                     }
                                     else { i = -1; }
                                 }

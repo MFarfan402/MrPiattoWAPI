@@ -27,7 +27,19 @@ namespace MrPiattoWAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Categories>>> GetCategories()
         {
-            return await _context.Categories.ToListAsync();
+            List<Categories> categories = await _context.Categories.ToListAsync();
+            List<Categories> finalCat = new List<Categories>();
+            Random random = new Random();
+            for(int i = 0; i < 5;)
+            {
+                int index = random.Next(categories.Count());
+                if(!finalCat.Contains(categories[index]))
+                {
+                    finalCat.Add(categories[index]);
+                    i++;
+                }
+            }
+            return finalCat;
         }
 
         // GET: api/Categories/5
