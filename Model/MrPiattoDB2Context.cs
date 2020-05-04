@@ -47,8 +47,8 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
-                //optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
             }
         }
 
@@ -552,7 +552,13 @@ namespace MrPiattoWAPI.Model
                     .HasForeignKey(d => d.Idpayment)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Restaurant_PaymentOptions");
+
+                entity.Property(e => e.UrlMainFoto)
+                    .HasColumnName("urlMainFoto")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
             });
+
 
             modelBuilder.Entity<RestaurantPhotos>(entity =>
             {

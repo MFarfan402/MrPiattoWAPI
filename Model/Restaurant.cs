@@ -42,6 +42,7 @@ namespace MrPiattoWAPI.Model
             SeverityLevel = restaurant.SeverityLevel;
             Long = restaurant.Long;
             Lat = restaurant.Lat;
+            UrlMainFoto = restaurant.UrlMainFoto;
             Idcategories = restaurant.Idcategories;
             Idpayment = restaurant.Idpayment;
         }
@@ -63,6 +64,7 @@ namespace MrPiattoWAPI.Model
         public double Lat { get; set; }
         public int Idcategories { get; set; }
         public int Idpayment { get; set; }
+        public string UrlMainFoto { get; set; }
 
         public virtual Categories IdcategoriesNavigation { get; set; }
         public virtual PaymentOptions IdpaymentNavigation { get; set; }
