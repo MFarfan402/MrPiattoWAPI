@@ -90,10 +90,12 @@ namespace MrPiattoWAPI.Controllers
         // Usuario -> Visitados -> Reseña -> Enviar datos
         // Method used to get the scores and the comments of a restaurant.
         [HttpPost]
-        public async void PostSurveys(Surveys surveys)
+        public async Task<string> PostSurveys(Surveys surveys)
         {
             _context.Surveys.Add(surveys);
             await _context.SaveChangesAsync();
+
+            return "Su comentario se ha publicado correctamente";
         }
     }
 }

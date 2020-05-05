@@ -50,12 +50,12 @@ namespace MrPiattoWAPI.Controllers
         // Usuario -> Visitados -> Reseña -> Enviar datos
         // Method to post a comment for the restaurant.
         [HttpPost]
-        public async Task<string> PostComments(Comments comments)
+        public async Task<Comments> PostComments(Comments comments)
         {
             _context.Comments.Add(comments);
             await _context.SaveChangesAsync();
-
-            return "Su comentario se ha publicado correctamente";
+            return _context.Comments.Where(c => c.Idrestaurant == comments.Idrestaurant && c.Iduser == comments.Iduser
+            && c.Comment == comments.Comment).FirstOrDefault();
         }
 
     }
