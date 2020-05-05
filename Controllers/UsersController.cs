@@ -34,5 +34,16 @@ namespace MrPiattoWAPI.Controllers
         //    }
         //    return u;
         //}
+
+        //POST: api/Users
+        //To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
+        [HttpPost]
+        public async Task<string> PostUser(User user)
+        {
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
+            return $"Bienvenido a Mr. Piatto {user.FirstName}";
+        }
     }
 }

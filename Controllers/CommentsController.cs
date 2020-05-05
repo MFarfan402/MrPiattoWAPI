@@ -45,69 +45,18 @@ namespace MrPiattoWAPI.Controllers
             return comments;
         }
 
-        // PUT: api/Comments/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComments(int id, Comments comments)
-        {
-            if (id != comments.Idcomment)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comments).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommentsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Comments
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        // MAURICIO FARFAN
+        // Usuario -> Visitados -> Reseña -> Enviar datos
+        // Method to post a comment for the restaurant.
         [HttpPost]
-        public async Task<ActionResult<Comments>> PostComments(Comments comments)
+        public async Task<string> PostComments(Comments comments)
         {
             _context.Comments.Add(comments);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetComments", new { id = comments.Idcomment }, comments);
+            return "Su comentario se ha publicado correctamente";
         }
 
-        // DELETE: api/Comments/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Comments>> DeleteComments(int id)
-        {
-            var comments = await _context.Comments.FindAsync(id);
-            if (comments == null)
-            {
-                return NotFound();
-            }
-
-            _context.Comments.Remove(comments);
-            await _context.SaveChangesAsync();
-
-            return comments;
-        }
-
-        private bool CommentsExists(int id)
-        {
-            return _context.Comments.Any(e => e.Idcomment == id);
-        }
     }
 }

@@ -50,6 +50,10 @@ namespace MrPiattoWAPI.Controllers
             return restaurant;
         }
 
+        // GET: api/Restaurants/MainPage
+        // MAURICIO FARFAN
+        // Usuario -> HomeFragmentView
+        // Method used to get all the information about a restaurant and put them into the fragment.
         [HttpGet("MainPage")]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserMainPage()
         {
@@ -67,7 +71,37 @@ namespace MrPiattoWAPI.Controllers
                 }
             }
             return resOnScreen;
-            
+        }
+
+        // POST: api/Restaurants
+        // MAURICIO FARFAN
+        // Usuario -> Menu lateral -> Quiero ser Mr. Piatto
+        // Method to put a restaurant into the system, with confirmation = 0.
+        [HttpPost]
+        public async Task<string> PostRestaurant(Restaurant restaurant)
+        {
+            _context.Restaurant.Add(restaurant);
+            await _context.SaveChangesAsync();
+            return "Solicitud enviada. Espera la llamada de nuestro equipo!";
+        }
+
+        // GET: api/Restaurants/Verifier/{idRestaurant}
+        // MAURICIO FARFAN
+        // Verificador -> Seguimiento -> Barra de búsqueda
+        // Method used to get all the information about a restaurant and put them into the fragment.
+        [HttpGet("Verifier/{id}")]
+        public async Task<ActionResult<Restaurant>> VerifierSearch(int id)
+        {
+            var restaurant = await _context.Restaurant.Where(r => r.Idrestaurant == id)
+               .Include(r => r.IdcategoriesNavigation)
+               .Include(r => r.IdpaymentNavigation)
+               .FirstAsync();
+
+            if(restaurant == null)
+            {
+                return NotFound();
+            } 
+            return restaurant;
         }
     }
 }

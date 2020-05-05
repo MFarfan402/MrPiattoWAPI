@@ -888,6 +888,10 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Visited).HasColumnName("visited");
 
+                entity.Property(e => e.ComplaintAdded).HasColumnName("ComplaintAdded");
+
+                entity.Property(e => e.SurveyAdded).HasColumnName("SurveyAdded");
+
                 entity.HasOne(d => d.IdrestaurantNavigation)
                     .WithMany(p => p.UserRestaurant)
                     .HasForeignKey(d => d.Idrestaurant)

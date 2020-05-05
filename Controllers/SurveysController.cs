@@ -52,15 +52,23 @@ namespace MrPiattoWAPI.Controllers
         public async Task<List<double>> GetSurveys(int id)
         {
             List<double> results = new List<double>();
-            results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
+            if (_context.Surveys.Where(s => s.Idrestaurant == id).Count() > 0)
+            {
+                results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
                 .Select(s => s.FoodRating).AverageAsync());
-            results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
-                .Select(s => s.ComfortRating).AverageAsync());
-            results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
-                .Select(s => s.ServiceRating).AverageAsync());
-            results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
-                .Select(s => s.GeneralScore).AverageAsync());
-
+                results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
+                    .Select(s => s.ComfortRating).AverageAsync());
+                results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
+                    .Select(s => s.ServiceRating).AverageAsync());
+                results.Add(await _context.Surveys.Where(s => s.Idrestaurant == id)
+                    .Select(s => s.GeneralScore).AverageAsync());
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                    results.Add(5);
+            }
+            
             return results;
         }
 
@@ -77,69 +85,15 @@ namespace MrPiattoWAPI.Controllers
                 .ToListAsync();
         }
 
-        // PUT: api/Surveys/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSurveys(int id, Surveys surveys)
-        {
-            if (id != surveys.Idsurvey)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(surveys).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SurveysExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Surveys
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        // MAURICIO FARFAN
+        // Usuario -> Visitados -> Reseña -> Enviar datos
+        // Method used to get the scores and the comments of a restaurant.
         [HttpPost]
-        public async Task<ActionResult<Surveys>> PostSurveys(Surveys surveys)
+        public async void PostSurveys(Surveys surveys)
         {
             _context.Surveys.Add(surveys);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSurveys", new { id = surveys.Idsurvey }, surveys);
-        }
-
-        // DELETE: api/Surveys/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Surveys>> DeleteSurveys(int id)
-        {
-            var surveys = await _context.Surveys.FindAsync(id);
-            if (surveys == null)
-            {
-                return NotFound();
-            }
-
-            _context.Surveys.Remove(surveys);
-            await _context.SaveChangesAsync();
-
-            return surveys;
-        }
-
-        private bool SurveysExists(int id)
-        {
-            return _context.Surveys.Any(e => e.Idsurvey == id);
         }
     }
 }
