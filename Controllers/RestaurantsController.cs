@@ -55,10 +55,17 @@ namespace MrPiattoWAPI.Controllers
         {
             Random random = new Random();
             var restaurants = await _context.Restaurant.Where(r => r.Confirmation == true)
-                .Include(c=>c.IdcategoriesNavigation).ToListAsync();
+                .Include(c=>c.IdcategoriesNavigation).Include(z => z.IdpaymentNavigation).ToListAsync();
             List<Restaurant> resOnScreen = new List<Restaurant>();
-            for (int i = 0; i < 4; i++)
-                resOnScreen.Add(restaurants[random.Next(restaurants.Count)]);
+            for (int i = 0; i < 5;)
+            {
+                int index = random.Next(restaurants.Count);
+                if (!resOnScreen.Contains(restaurants[index]))
+                {
+                    resOnScreen.Add(restaurants[index]);
+                    i++;
+                }
+            }
             return resOnScreen;
             
         }

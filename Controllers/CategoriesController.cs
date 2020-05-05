@@ -30,7 +30,7 @@ namespace MrPiattoWAPI.Controllers
             List<Categories> categories = await _context.Categories.ToListAsync();
             List<Categories> finalCat = new List<Categories>();
             Random random = new Random();
-            for(int i = 0; i < 5;)
+            for(int i = 0; i < 4;)
             {
                 int index = random.Next(categories.Count());
                 if(!finalCat.Contains(categories[index]))

@@ -37,6 +37,7 @@ namespace MrPiattoWAPI.Controllers
             {
                 favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
                     .Include(y => y.IdcategoriesNavigation)
+                    .Include(z => z.IdpaymentNavigation)
                     .FirstOrDefault());
             }
 
@@ -63,6 +64,7 @@ namespace MrPiattoWAPI.Controllers
             {
                 visited.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
                     .Include(y => y.IdcategoriesNavigation)
+                    .Include(z => z.IdpaymentNavigation)
                     .FirstOrDefault());
             }
 
