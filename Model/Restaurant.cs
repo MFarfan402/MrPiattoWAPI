@@ -51,20 +51,20 @@ namespace MrPiattoWAPI.Model
         public string Mail { get; set; }
         public string Password { get; set; }
         public bool Confirmation { get; set; }
-        public DateTime LastLogin { get; set; }
+        public DateTime? LastLogin { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
         public string Dress { get; set; }
-        public double Price { get; set; }
-        public double Score { get; set; }
-        public int SeverityLevel { get; set; }
-        public double Long { get; set; }
-        public double Lat { get; set; }
-        public int Idcategories { get; set; }
-        public int Idpayment { get; set; }
-        public string UrlMainFoto { get; set; }
+        public double? Price { get; set; }
+        public double? Score { get; set; }
+        public int? SeverityLevel { get; set; }
+        public double? Long { get; set; }
+        public double? Lat { get; set; }
+        public int? Idcategories { get; set; }
+        public int? Idpayment { get; set; }
+        public string? UrlMainFoto { get; set; }
 
         public virtual Categories IdcategoriesNavigation { get; set; }
         public virtual PaymentOptions IdpaymentNavigation { get; set; }

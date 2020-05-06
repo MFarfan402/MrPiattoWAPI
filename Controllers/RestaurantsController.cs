@@ -80,10 +80,20 @@ namespace MrPiattoWAPI.Controllers
         [HttpPost]
         public async Task<string> PostRestaurant(Restaurant restaurant)
         {
-            _context.Restaurant.Add(restaurant);
-            await _context.SaveChangesAsync();
-            return "Solicitud enviada. Espera la llamada de nuestro equipo!";
-        }
+            //Restaurant res = new Restaurant(restaurant);
+
+            ////res.Idrestaurant = restaurant.Idrestaurant;
+            ////res.Name = restaurant.Name;
+            ////res.Mail = restaurant.Mail;
+            ////res.Phone = restaurant.Phone;
+            ////res.Address = restaurant.Address;
+            restaurant.LastLogin = null;
+            restaurant.Idcategories = null;
+            restaurant.Idpayment = null;
+                _context.Restaurant.Add(restaurant);
+                await _context.SaveChangesAsync();
+                return "Solicitud enviada. Espera la llamada de nuestro equipo!";
+ }
 
         // GET: api/Restaurants/Verifier/{idRestaurant}
         // MAURICIO FARFAN
