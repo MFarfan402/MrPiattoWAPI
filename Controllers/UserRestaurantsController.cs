@@ -82,7 +82,7 @@ namespace MrPiattoWAPI.Controllers
         public async Task<string> PostUserRestaurant(UserRestaurant userRestaurant)
         {
             var restaurant = await _context.UserRestaurant
-                .Where(u => u.Iduser == userRestaurant.Iduser && u.Idrestaurant == userRestaurant.Idrestaurant).FirstAsync();
+                .Where(u => u.Iduser == userRestaurant.Iduser && u.Idrestaurant == userRestaurant.Idrestaurant).FirstOrDefaultAsync();
 
             if (restaurant == null)
             {

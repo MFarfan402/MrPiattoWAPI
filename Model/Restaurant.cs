@@ -49,7 +49,7 @@ namespace MrPiattoWAPI.Model
 
         public int Idrestaurant { get; set; }
         public string Mail { get; set; }
-        public string Password { get; set; }
+        public string? Password { get; set; }
         public bool Confirmation { get; set; }
         public DateTime? LastLogin { get; set; }
         public string Name { get; set; }
@@ -64,7 +64,7 @@ namespace MrPiattoWAPI.Model
         public double? Lat { get; set; }
         public int? Idcategories { get; set; }
         public int? Idpayment { get; set; }
-        public string? UrlMainFoto { get; set; }
+        public string UrlMainFoto { get; set; }
 
         public virtual Categories IdcategoriesNavigation { get; set; }
         public virtual PaymentOptions IdpaymentNavigation { get; set; }

@@ -30,19 +30,52 @@ namespace MrPiattoWAPI.Controllers
             return await _context.Comments.Where(c => c.Status == "Verifier").ToListAsync();
         }
 
-        // GET: api/Comments/{idRestaurant}
+        // GET: api/Comments/Delete/{idComment}
         // MAURICIO FARFAN
-        // Usuario -> RestaurantView -> Ver todas las reseñas.
-        // Method used to get all the comments of a restaurant that are in an 'active' status.
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Comments>>> GetComments(int id)
+        // Verificador -> Reseñas -> Eliminar
+        [HttpGet("Delete/{id}")]
+        public async Task<bool> DeleteComment(int id)
         {
-            var comments = await _context.Comments.Where(c => c.Idrestaurant == id && c.Status == "Aceptado").ToListAsync();
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment == null)
+                return false;
 
-            if (comments == null)
-                return NotFound();
+            _context.Comments.Remove(comment);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
-            return comments;
+        // GET: api/Comments/NotBad/{idComment}
+        // MAURICIO FARFAN
+        // Verificador -> Reseñas -> Eliminar
+        [HttpGet("NotBad/{id}")]
+        public async Task<bool> NotBadComment(int id)
+        {
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment == null)
+                return false;
+
+            comment.Status = "Aceptado";
+            _context.Entry(comment).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // GET: api/Comments/Report/{id}
+        // MAURICIO FARFAN
+        // Usuario -> RestaurantView -> Ver todas las reseñas -> Reportar
+        [HttpGet("Report/{id}")]
+        public async Task<bool> NoticeComments(int id)
+        {
+            var comment = await _context.Comments.FindAsync(id);
+
+            if (comment == null)
+                return false;
+
+            comment.Status = "Verifier";
+            _context.Entry(comment).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         // POST: api/Comments
@@ -57,6 +90,5 @@ namespace MrPiattoWAPI.Controllers
             return _context.Comments.Where(c => c.Idrestaurant == comments.Idrestaurant && c.Iduser == comments.Iduser
             && c.Comment == comments.Comment).FirstOrDefault();
         }
-
     }
 }

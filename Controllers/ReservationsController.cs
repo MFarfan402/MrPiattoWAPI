@@ -1,11 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using java.io;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MrPiattoWAPI.Model;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace MrPiattoWAPI.Controllers
 {
@@ -14,12 +20,13 @@ namespace MrPiattoWAPI.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly MrPiattoDB2Context _context;
+        readonly string pathQRBase = @"C:\Users\mauri\OneDrive\Escritorio\images\qr";
+        readonly string pathServer = "http://192.168.100.207/images/qr/";
 
         public ReservationsController(MrPiattoDB2Context context)
         {
             _context = context;
         }
-
         // GET: api/Reservations/{idUser}
         // MAURICIO FARFAN
         // Usuario -> Mis Reservaciones
@@ -33,8 +40,16 @@ namespace MrPiattoWAPI.Controllers
             if (reservations == null)
                 return NotFound();
             return reservations;
+            
         }
-
+        [HttpGet("QR/{id}")]
+        public async void FireAndForgetQr(int id)
+        {
+            var reservation = _context.Reservation.Where(r => r.Iduser == id && r.Url == ".").FirstOrDefault();
+            if (reservation == null)
+                return;
+            await GenerateQRAsync(reservation);
+        }
         // GET: api/Reservations/{idUser}
         // MAURICIO ANDRES
         // Restaurante -> Mis Reservaciones
@@ -49,39 +64,6 @@ namespace MrPiattoWAPI.Controllers
             if (reservations == null)
                 return NotFound();
             return reservations;
-        }
-
-
-        // PUT: api/Reservations/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReservation(int id, Reservation reservation)
-        {
-            if (id != reservation.Idreservation)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(reservation).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReservationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
 
         // POST: api/Reservations
@@ -106,7 +88,7 @@ namespace MrPiattoWAPI.Controllers
          *  
          *  5. Si no existen registros de mesas grandes es hora de pegar mesas.
          */
-        public async Task<string> PostReservation(Reservation reservation)
+        public async Task<string> PostReservationAsync(Reservation reservation)
         {
             // 1st step
             var userReservations = _context.Reservation.Where(r => r.Iduser == reservation.Iduser
@@ -132,7 +114,7 @@ namespace MrPiattoWAPI.Controllers
             // 4th step
             var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == reservation.Idtable
             && t.Seats >= reservation.AmountOfPeople).ToList();
-            
+
             List<Reservation> reservations;
 
             if (tables.Count() != 0)
@@ -154,11 +136,12 @@ namespace MrPiattoWAPI.Controllers
                             reservation.Idtable = table.Idtables;
                             _context.Reservation.Add(reservation);
                             await _context.SaveChangesAsync();
+
                             return "Tu reservación se ha generado con éxito.";
                         }
                         else
                         {
-                            for(int i = reservations.Count - 1; i >= 0; i--)
+                            for (int i = reservations.Count - 1; i >= 0; i--)
                             {
                                 if (reservation.Date > reservations[i].Date)
                                 {
@@ -192,6 +175,32 @@ namespace MrPiattoWAPI.Controllers
                 return "No hay disponibilidad para este horario";
             }
             return "Favor de contactar al restaurante para hacer la reservación.";
+        }
+
+
+
+        private async Task GenerateQRAsync(Reservation reservation)
+        {
+            string content = JsonConvert.SerializeObject(reservation,Formatting.None,
+                new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+
+            var client = new RestClient($"https://qrcode3.p.rapidapi.com/generateQR?fill_style=solid&inner_eye_style=circle&style=circle&outer_eye_style=circle&ec_level=M&format=png&text={content}");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("x-rapidapi-host", "qrcode3.p.rapidapi.com");
+            request.AddHeader("x-rapidapi-key", "2226ad8917msh0d8f7e8e40c4b9fp19d487jsn5d51681b32fc");
+            IRestResponse response = client.Execute(request);
+
+            byte[] bitmap = response.RawBytes;
+
+            Image image = Image.FromStream(new MemoryStream(bitmap));
+            image.Save($@"{pathQRBase}\{reservation.Iduser}_{reservation.Idreservation}.png", ImageFormat.Png);
+
+            reservation.Url = $"{pathServer}{reservation.Iduser}_{reservation.Idreservation}.png";
+            _context.Entry(reservation).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
         // DELETE: api/Reservations/5

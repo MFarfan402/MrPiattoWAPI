@@ -30,6 +30,45 @@ namespace MrPiattoWAPI.Controllers
             return await _context.Restaurant.Where(r => r.Confirmation == false).ToListAsync();
         }
 
+        // GET: api/Restaurants/Deny/{idRestaurant}
+        // MAURICIO FARFAN
+        // Verficador -> Añadir -> Denegar
+        [HttpGet("Deny/{id}")]
+        public async Task<bool> DenyRestaurant(int id)
+        {
+
+            var restaurant = await _context.Restaurant.FindAsync(id);
+            if (restaurant == null)
+                return false;
+
+            _context.Restaurant.Remove(restaurant);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // GET: api/Restaurants/Accept/{idRestaurant}
+        // MAURICIO FARFAN
+        // Verficador -> Añadir -> Agregar
+        [HttpGet("Accept/{id}")]
+        public async Task<string> AcceptRestaurant(int id)
+        {
+            var restaurant = await _context.Restaurant.FindAsync(id);
+            if (restaurant == null)
+                return "Error. Intente de nuevo más tarde.";
+
+            restaurant.Password = GeneratePassword();
+            _context.Entry(restaurant).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return restaurant.Password;
+        }
+
+        private string GeneratePassword()
+        {
+            Random random = new Random();
+            return random.Next(10000, 99999).ToString();
+        }
+
         // GET: api/Restaurants/{idRestaurant}
         // MAURICIO FARFAN
         // Usuario -> RestaurantView

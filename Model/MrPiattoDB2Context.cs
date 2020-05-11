@@ -488,13 +488,11 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Confirmation).HasColumnName("confirmation");
 
                 entity.Property(e => e.Description)
-                    .IsRequired()
                     .HasColumnName("description")
                     .HasMaxLength(300)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Dress)
-                    .IsRequired()
                     .HasColumnName("dress")
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -524,7 +522,6 @@ namespace MrPiattoWAPI.Model
                     .IsUnicode(false);
 
                 entity.Property(e => e.Password)
-                    .IsRequired()
                     .HasColumnName("password")
                     .HasMaxLength(20)
                     .IsUnicode(false);
