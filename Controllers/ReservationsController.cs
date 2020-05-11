@@ -217,6 +217,8 @@ namespace MrPiattoWAPI.Controllers
         [HttpPost("Not/Aux")]
         public async Task<string> AddManReservation(AuxiliarReservation reservation)
         {
+            try
+            {
                 AuxiliarReservation aux = new AuxiliarReservation();
 
                 aux.IdauxiliarTable = reservation.IdauxiliarTable;
@@ -232,6 +234,10 @@ namespace MrPiattoWAPI.Controllers
                 _context.AuxiliarReservation.Add(aux);
                 await _context.SaveChangesAsync();
                 return "Reservacion agregada";
+            } catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
  
         }
 
