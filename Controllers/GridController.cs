@@ -101,6 +101,33 @@ namespace MrPiattoWAPI.Controllers
         // POST: api/ResInfo/
         // MAURICIO ANDRES
         // Method used to add a table
+        [HttpPost("Aux")]
+        public async Task<string> AddAuxTable(AuxiliarTables table)
+        {
+            try
+            {
+                AuxiliarTables aux = new AuxiliarTables();
+
+                aux.Idrestaurant = table.Idrestaurant;
+                aux.FloorName = table.FloorName;
+                aux.CoordenateX = table.CoordenateX;
+                aux.CoordenateY = table.CoordenateY;
+                aux.AvarageUse = table.AvarageUse;
+                aux.StringIdtables = table.StringIdtables;
+
+                _context.AuxiliarTables.Add(aux);
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to add a table
         [HttpPost("UpdateTable")]
         public async Task<string> UpdateRestaurant(RestaurantTables table)
         {

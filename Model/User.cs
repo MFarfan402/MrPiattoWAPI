@@ -7,7 +7,6 @@ namespace MrPiattoWAPI.Model
     {
         public User()
         {
-            AuxiliarReservation = new HashSet<AuxiliarReservation>();
             Comments = new HashSet<Comments>();
             Complaints = new HashSet<Complaints>();
             LockedRestaurants = new HashSet<LockedRestaurants>();
@@ -28,7 +27,6 @@ namespace MrPiattoWAPI.Model
         public string UserType { get; set; }
         public DateTime? UnlockedDay { get; set; }
 
-        public virtual ICollection<AuxiliarReservation> AuxiliarReservation { get; set; }
         public virtual ICollection<Comments> Comments { get; set; }
         public virtual ICollection<Complaints> Complaints { get; set; }
         public virtual ICollection<LockedRestaurants> LockedRestaurants { get; set; }

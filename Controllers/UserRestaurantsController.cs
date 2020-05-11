@@ -24,55 +24,55 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO FARFAN
         // Usuario -> Favoritos
         // Method used to retrieve the information of a restaurant marked as favorite from a user.
-        [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
-        {
-            List<Restaurant> favorites = new List<Restaurant>();
-            var restaurants = await _context.UserRestaurant
-                .Where(u => u.Iduser == id && u.Favorite == true)
-                .Select(id => new UserRestaurant
-                { Idrestaurant = id.Idrestaurant })
-                .ToListAsync();
-            foreach (var r in restaurants)
-            {
-                favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
-                    .Include(y => y.IdcategoriesNavigation)
-                    .Include(z => z.IdpaymentNavigation)
-                    .FirstOrDefault());
-            }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
+        //{
+        //    List<Restaurant> favorites = new List<Restaurant>();
+        //    var restaurants = await _context.UserRestaurant
+        //        .Where(u => u.Iduser == id && u.Favorite == true)
+        //        .Select(id => new UserRestaurant
+        //        { Idrestaurant = id.Idrestaurant })
+        //        .ToListAsync();
+        //    foreach (var r in restaurants)
+        //    {
+        //        favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
+        //            .Include(y => y.IdcategoriesNavigation)
+        //            .Include(z => z.IdpaymentNavigation)
+        //            .FirstOrDefault());
+        //    }
 
-            if (restaurants == null)
-                return NotFound();
+        //    if (restaurants == null)
+        //        return NotFound();
 
-            return favorites;
-        }
+        //    return favorites;
+        //}
 
         // GET: api/UserRestaurants/Visited/{idUser}
         // MAURICIO FARFAN
         // Menú lateral -> Visitados
         // Method used to retrieve the information of a restaurant that a user has visited.
-        [HttpGet("Visited/{id}")]
-        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserVisited(int id)
-        {
-            List<Restaurant> visited = new List<Restaurant>();
-            var restaurants = await _context.UserRestaurant
-                .Where(u => u.Iduser == id && u.Visited == true)
-                .Select(id => new UserRestaurant
-                { Idrestaurant = id.Idrestaurant })
-                .ToListAsync();
-            foreach (var r in restaurants)
-            {
-                visited.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
-                    .Include(y => y.IdcategoriesNavigation)
-                    .Include(z => z.IdpaymentNavigation)
-                    .FirstOrDefault());
-            }
+        //[HttpGet("Visited/{id}")]
+        //public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserVisited(int id)
+        //{
+        //    List<Restaurant> visited = new List<Restaurant>();
+        //    var restaurants = await _context.UserRestaurant
+        //        .Where(u => u.Iduser == id && u.Visited == true)
+        //        .Select(id => new UserRestaurant
+        //        { Idrestaurant = id.Idrestaurant })
+        //        .ToListAsync();
+        //    foreach (var r in restaurants)
+        //    {
+        //        visited.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
+        //            .Include(y => y.IdcategoriesNavigation)
+        //            .Include(z => z.IdpaymentNavigation)
+        //            .FirstOrDefault());
+        //    }
 
-            if (restaurants == null)
-                return NotFound();
+        //    if (restaurants == null)
+        //        return NotFound();
 
-            return visited;
-        }
+        //    return visited;
+        //}
 
         // POST: api/userRestaurants
         // MAURICIO FARFAN

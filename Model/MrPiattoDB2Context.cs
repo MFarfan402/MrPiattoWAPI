@@ -25,6 +25,7 @@ namespace MrPiattoWAPI.Model
         public virtual DbSet<LockedHours> LockedHours { get; set; }
         public virtual DbSet<LockedRestaurants> LockedRestaurants { get; set; }
         public virtual DbSet<LockedTables> LockedTables { get; set; }
+        public virtual DbSet<ManualReservations> ManualReservations { get; set; }
         public virtual DbSet<PaymentOptions> PaymentOptions { get; set; }
         public virtual DbSet<Policies> Policies { get; set; }
         public virtual DbSet<Reservation> Reservation { get; set; }
@@ -47,8 +48,8 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
-                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
             }
         }
 
@@ -60,35 +61,34 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.IdauxiliarReservation).HasColumnName("IDAuxiliarReservation");
 
-                entity.Property(e => e.AmountOfPeople).HasColumnName("amountOfPeople");
+                entity.Property(e => e.IdauxiliarTable).HasColumnName("IDAuxiliarTable");
 
                 entity.Property(e => e.Date)
                     .HasColumnName("date")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.IdauxiliarTable).HasColumnName("IDAuxiliarTable");
-
-                entity.Property(e => e.Iduser).HasColumnName("IDUser");
+                entity.Property(e => e.AmountOfPeople).HasColumnName("amountOfPeople");
 
                 entity.Property(e => e.ReservationStatus).HasColumnName("reservationStatus");
 
                 entity.Property(e => e.Url)
-                    .IsRequired()
                     .HasColumnName("url")
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Phone).HasColumnName("Phone");
+
+                entity.Property(e => e.Checked).HasColumnName("checked");
+
+                entity.Property(e => e.Name).HasColumnName("Name");
+
+                entity.Property(e => e.LastName).HasColumnName("LastName");
 
                 entity.HasOne(d => d.IdauxiliarTableNavigation)
                     .WithMany(p => p.AuxiliarReservation)
                     .HasForeignKey(d => d.IdauxiliarTable)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AuxiliarReservation_AuxiliarTable");
-
-                entity.HasOne(d => d.IduserNavigation)
-                    .WithMany(p => p.AuxiliarReservation)
-                    .HasForeignKey(d => d.Iduser)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_AuxiliarReservation_User");
             });
 
             modelBuilder.Entity<AuxiliarTables>(entity =>
@@ -387,6 +387,29 @@ namespace MrPiattoWAPI.Model
                     .HasConstraintName("FK_LockedTables_RestaurantTables");
             });
 
+            modelBuilder.Entity<ManualReservations>(entity =>
+            {
+                entity.HasKey(e => e.IDReservation);
+
+                entity.Property(e => e.IDTable).HasColumnName("IDTable");
+
+                entity.Property(e => e.Date).HasColumnName("date");
+
+                entity.Property(e => e.AmountOfPeople).HasColumnName("amountOfPeople");
+
+                entity.Property(e => e.Checked).HasColumnName("checked");
+
+                entity.Property(e => e.Name).HasColumnName("name");
+
+                entity.Property(e => e.LastName).HasColumnName("lastName");
+
+                entity.HasOne(d => d.IdtableNavigation)
+                    .WithMany(p => p.ManualReservations)
+                    .HasForeignKey(d => d.IDTable)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ManualReservatinos_Table");
+            });
+
             modelBuilder.Entity<PaymentOptions>(entity =>
             {
                 entity.HasKey(e => e.IdpaymentOptions);
@@ -459,6 +482,8 @@ namespace MrPiattoWAPI.Model
                     .HasColumnName("url")
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Checked).HasColumnName("checked");
 
                 entity.HasOne(d => d.IdtableNavigation)
                     .WithMany(p => p.Reservation)

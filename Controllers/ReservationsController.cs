@@ -177,7 +177,106 @@ namespace MrPiattoWAPI.Controllers
             return "Favor de contactar al restaurante para hacer la reservación.";
         }
 
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Not/Res/{id}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetResNotifications(int id)
+        {
+            var reservations = await _context.Reservation
+                .Where(r => r.IdtableNavigation.IdrestaurantNavigation.Idrestaurant == id 
+                && r.Checked != true && DateTime.Now.AddMinutes(30) >= r.Date && r.Date >= DateTime.Now)
+                .Include(u => u.IduserNavigation)
+                .Include(t => t.IdtableNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
 
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Not/Aux/{id}")]
+        public async Task<ActionResult<IEnumerable<AuxiliarReservation>>> GetAuxNotifications(int id)
+        {
+            var reservations = await _context.AuxiliarReservation
+                .Where(r => r.IdauxiliarTableNavigation.Idrestaurant == id
+                && r.Checked != true && DateTime.Now.AddMinutes(30) >= r.Date && r.Date >= DateTime.Now)
+                .Include(t => t.IdauxiliarTableNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpPost("Not/Aux")]
+        public async Task<string> AddManReservation(AuxiliarReservation reservation)
+        {
+                AuxiliarReservation aux = new AuxiliarReservation();
+
+                aux.IdauxiliarTable = reservation.IdauxiliarTable;
+                aux.Date = reservation.Date;
+                aux.AmountOfPeople = reservation.AmountOfPeople;
+                aux.ReservationStatus = reservation.ReservationStatus;
+                aux.Url = reservation.Url;
+                aux.Phone = reservation.Phone;
+                aux.Checked = reservation.Checked;
+                aux.Name = reservation.Name;
+                aux.LastName = reservation.LastName;
+
+                _context.AuxiliarReservation.Add(aux);
+                await _context.SaveChangesAsync();
+                return "Reservacion agregada";
+ 
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Not/ManRes/{id}")]
+        public async Task<ActionResult<IEnumerable<ManualReservations>>> GetManResNotifications(int id)
+        {
+            var reservations = await _context.ManualReservations
+                .Where(r => r.IdtableNavigation.Idrestaurant == id
+                && r.Checked != true && DateTime.Now.AddMinutes(30) >= r.Date && r.Date >= DateTime.Now)
+                .Include(t => t.IdtableNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpPost("Not/ManRes")]
+        public async Task<string> AddManReservation(ManualReservations reservation)
+        {
+            try
+            {
+                ManualReservations manual = new ManualReservations();
+
+                manual.IDTable = reservation.IDTable;
+                manual.Date = reservation.Date;
+                manual.AmountOfPeople = reservation.AmountOfPeople;
+                manual.Checked = reservation.Checked;
+                manual.Name = reservation.Name;
+                manual.LastName = reservation.LastName;
+
+                _context.ManualReservations.Add(manual);
+                await _context.SaveChangesAsync();
+                return "Reservacion agregada";
+            } catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
 
         private async Task GenerateQRAsync(Reservation reservation)
         {
