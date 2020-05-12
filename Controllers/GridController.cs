@@ -101,6 +101,22 @@ namespace MrPiattoWAPI.Controllers
         // POST: api/ResInfo/
         // MAURICIO ANDRES
         // Method used to add a table
+        [HttpGet("Aux/{idRes}")]
+        public async Task<ActionResult<IEnumerable<AuxiliarTables>>> GetAuxTable(int idRes)
+        {
+            var reservations = await _context.AuxiliarTables.Where(r => r.Idrestaurant == idRes).ToListAsync();
+
+            if (reservations == null)
+            {
+                return NotFound();
+            }
+
+            return reservations;
+        }
+
+        // POST: api/ResInfo/
+        // MAURICIO ANDRES
+        // Method used to add a table
         [HttpPost("Aux")]
         public async Task<string> AddAuxTable(AuxiliarTables table)
         {
