@@ -51,6 +51,19 @@ namespace MrPiattoWAPI.Controllers
             return id.Iduser;
         }
 
+        [HttpGet("Intervals/{id}/{interval1}/{interval2}")]
+        public async Task<ActionResult<IEnumerable<Model.User>>> GetUsersInterval(int id, DateTime interval1, DateTime interval2)
+        {
+            var users = await _context.Reservation
+                .Where(r => r.IdtableNavigation.Idrestaurant == id
+                && r.Date >= interval1 && r.Date <= interval2)
+                .Select(u => u.IduserNavigation).ToListAsync();
+
+            if (users == null)
+                return NotFound();
+            return users;
+        }
+
         [HttpGet]
         public async Task<string> SendMail()
         {

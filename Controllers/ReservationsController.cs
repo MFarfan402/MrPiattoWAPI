@@ -198,12 +198,49 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO ANDRES
         // Notificaciones
         // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Not/Res/{id}/{date}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetUserReservationsByHour(int id, DateTime date)
+        {
+            var reservations = await _context.Reservation
+                .Where(r => r.IdtableNavigation.IdrestaurantNavigation.Idrestaurant == id
+                && r.Date == date)
+                .Include(u => u.IduserNavigation)
+                .Include(t => t.IdtableNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
         [HttpGet("Not/Aux/{id}")]
         public async Task<ActionResult<IEnumerable<AuxiliarReservation>>> GetAuxNotifications(int id)
         {
             var reservations = await _context.AuxiliarReservation
                 .Where(r => r.IdauxiliarTableNavigation.Idrestaurant == id
                 && r.Checked != true && DateTime.Now.AddMinutes(30) >= r.Date && r.Date >= DateTime.Now)
+                .Include(t => t.IdauxiliarTableNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Not/Aux/{id}/{date}")]
+        public async Task<ActionResult<IEnumerable<AuxiliarReservation>>> GetAuxReservationsByHour(int id, DateTime date)
+        {
+            var reservations = await _context.AuxiliarReservation
+                .Where(r => r.IdauxiliarTableNavigation.Idrestaurant == id
+                && r.Date.Year == date.Year
+                && r.Date.Month == date.Month
+                && r.Date.Day == date.Day
+                && r.Date.Hour == date.Hour
+                && r.Date.Minute == date.Minute)
                 .Include(t => t.IdauxiliarTableNavigation).ToListAsync();
             if (reservations == null)
                 return NotFound();
@@ -251,6 +288,26 @@ namespace MrPiattoWAPI.Controllers
             var reservations = await _context.ManualReservations
                 .Where(r => r.IdtableNavigation.Idrestaurant == id
                 && r.Checked != true && DateTime.Now.AddMinutes(30) >= r.Date && r.Date >= DateTime.Now)
+                .Include(t => t.IdtableNavigation).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpGet("Not/ManRes/{id}/{date}")]
+        public async Task<ActionResult<IEnumerable<ManualReservations>>> GetManReservationsByHour(int id, DateTime date)
+        {
+            var reservations = await _context.ManualReservations
+                .Where(r => r.IdtableNavigation.Idrestaurant == id
+                && r.Date.Year == date.Year 
+                && r.Date.Month == date.Month
+                && r.Date.Day == date.Day
+                && r.Date.Hour == date.Hour
+                && r.Date.Minute == date.Minute)
                 .Include(t => t.IdtableNavigation).ToListAsync();
             if (reservations == null)
                 return NotFound();
