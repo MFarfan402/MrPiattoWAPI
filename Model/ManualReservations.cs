@@ -14,6 +14,7 @@ namespace MrPiattoWAPI.Model
         public bool Checked { get; set; }
         public string Name { get; set; }
         public string LastName { get; set; }
+        public string Phone { get; set; }
 
         public virtual RestaurantTables IdtableNavigation { get; set; }
     }

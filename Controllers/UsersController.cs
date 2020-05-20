@@ -64,6 +64,17 @@ namespace MrPiattoWAPI.Controllers
             return users;
         }
 
+        [HttpGet("All/{id}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetAllUsers(int id)
+        {
+            var reservations = await _context.Reservation
+                .Where(r => r.IdtableNavigation.Idrestaurant == id).ToListAsync();
+
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
         [HttpGet]
         public async Task<string> SendMail()
         {

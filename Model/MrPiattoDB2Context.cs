@@ -403,6 +403,8 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.LastName).HasColumnName("lastName");
 
+                entity.Property(e => e.Phone).HasColumnName("phone");
+
                 entity.HasOne(d => d.IdtableNavigation)
                     .WithMany(p => p.ManualReservations)
                     .HasForeignKey(d => d.IDTable)

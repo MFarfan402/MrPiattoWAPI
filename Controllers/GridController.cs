@@ -25,7 +25,7 @@ namespace MrPiattoWAPI.Controllers
         [HttpGet("{idRes}")]
         public async Task<ActionResult<IEnumerable<RestaurantTables>>> GetTables(int idRes)
         {
-            var restaurantTables = await _context.RestaurantTables.Include(r => r.Reservation).Where(r => r.Idrestaurant == idRes).ToListAsync();
+            var restaurantTables = await _context.RestaurantTables.Include(r => r.Reservation).Include(r => r.ManualReservations).Where(r => r.Idrestaurant == idRes).ToListAsync();
 
             if (restaurantTables == null)
             {
