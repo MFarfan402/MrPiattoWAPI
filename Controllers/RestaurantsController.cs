@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Mailjet.Client;
+using Mailjet.Client.Resources;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MrPiattoWAPI.Model;
+using Newtonsoft.Json.Linq;
 
 namespace MrPiattoWAPI.Controllers
 {
@@ -60,13 +63,71 @@ namespace MrPiattoWAPI.Controllers
             _context.Entry(restaurant).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
+            await SendNewPassword(restaurant.Mail ,restaurant.Password);
+
             return restaurant.Password;
+        }
+
+        private async Task SendNewPassword(string mail, string password)
+        {
+            MailjetClient client = new MailjetClient("36b25d6cba30469cf1cc8911bf79d22a", "882892776ad1f8768b813bcc8e8358b0")
+            { Version = ApiVersion.V3_1, };
+            MailjetRequest request = new MailjetRequest { Resource = Send.Resource, }
+            .Property(Send.Messages, new JArray {
+            new JObject {
+                { "From",
+                    new JObject {
+                        {"Email", "maufar402@gmail.com"},
+                        {"Name", "MrPiatto Configuration Manager"}}
+                }, { "To",
+                    new JArray {
+                        new JObject {
+                        { "Email",
+                          $"{mail}"
+                        }, {
+                          "Name",
+                          "Ailem" }}}
+                }, { "Subject", "Tu nueva contraseña de MrPiatto."
+                }, { "TextPart","Sending Password"
+                }, { "HTMLPart",
+                    $"<h3>Nos alegra que seas parte de MrPiatto.</h3><br/><br/>" +
+                    $"Aquí esta tu nueva contraseña:{password}<br/>" +
+                    $"Favor de no responder a este correo."
+                }, { "CustomID","AppGettingStartedTest"}}});
+            MailjetResponse response = await client.PostAsync(request);
         }
 
         private string GeneratePassword()
         {
             Random random = new Random();
             return random.Next(10000, 99999).ToString();
+        }
+
+        // GET: api/Restaurants/Inactive
+        // MAURICIO FARFAN
+        [HttpGet("Inactive")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetInactiveRestaurants()
+        {
+            List<Restaurant> restaurants = await _context.Restaurant.Where
+                (r => r.LastLogin < DateTime.Now - new TimeSpan(7, 0, 0, 0) && r.Confirmation == true).ToListAsync();
+            if (restaurants == null)
+                return null;
+            return restaurants;
+        }
+
+        // GET: api/Restaurants/DeleteInactive
+        // MAURICIO FARFAN
+        [HttpGet("DeleteInactive/{id}")]
+        public async Task<bool> DeleteInactive(int id)
+        {
+            var restaurant = await _context.Restaurant.FindAsync(id);
+            if (restaurant == null)
+                return false;
+
+            restaurant.Confirmation = false;
+            _context.Entry(restaurant).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         // GET: api/Restaurants/{idRestaurant}
