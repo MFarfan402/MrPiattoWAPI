@@ -34,5 +34,25 @@ namespace MrPiattoWAPI.Controllers
 
             return restaurantPhotos;
         }
+
+        [HttpGet("Delete/Photos/{idPhoto}")]
+        public async Task<string> DeletePhotos(int idPhoto)
+        {
+            try
+            {
+                var photo = await _context.RestaurantPhotos
+                    .Where(p => p.IdrestaurantPhotos == idPhoto).FirstAsync();
+
+                _context.RestaurantPhotos.Remove(photo);
+                await _context.SaveChangesAsync();
+
+                return "Foto eliminado";
+
+            }
+            catch
+            {
+                return "Error. Hubo un error con el servidor";
+            }
+        }
     }
 }

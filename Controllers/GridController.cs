@@ -35,6 +35,26 @@ namespace MrPiattoWAPI.Controllers
             return restaurantTables;
         }
 
+        [HttpGet("Delete/Tables/{idTable}")]
+        public async Task<string> DeleteTables(int idTable)
+        {
+            try
+            {
+                var restaurantTables = await _context.RestaurantTables
+                    .Where(t => t.Idtables == idTable).FirstAsync();
+
+                _context.RestaurantTables.Remove(restaurantTables);
+                await _context.SaveChangesAsync();
+
+                return "Mesa eliminado";
+
+            }
+            catch
+            {
+                return "Error. Cheque que la mesa no posea reservaciones para esa hora";
+            }
+        }
+
         [HttpGet("TFloors/{idRes}/{idFloors}")]
         public async Task<ActionResult<IEnumerable<RestaurantTables>>> GetTablesByFloors(int idRes, int idFloors)
         {

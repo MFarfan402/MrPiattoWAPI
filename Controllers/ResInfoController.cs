@@ -132,6 +132,27 @@ namespace MrPiattoWAPI.Controllers
             return waiters;
         }
 
+        // GET: api/Grid/5
+        [HttpGet("Delete/Waiters/{idWaiter}")]
+        public async Task<string> DeleteWaiters(int idWaiter)
+        {
+            try
+            {
+                var waiter = await _context.Waiters
+                    .Where(w => w.Idwaiter == idWaiter).FirstAsync();
+
+                _context.Waiters.Remove(waiter);
+                await _context.SaveChangesAsync();
+
+                return "Mesero eliminado";
+
+            }
+            catch
+            {
+                return "Error. Hubo un error en el servidor";
+            }
+        }
+
         // POST: api/ResInfo/
         // MAURICIO ANDRES
         // Method used to add a waiter
