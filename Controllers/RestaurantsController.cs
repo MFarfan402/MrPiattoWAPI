@@ -62,10 +62,20 @@ namespace MrPiattoWAPI.Controllers
             restaurant.Password = GeneratePassword();
             _context.Entry(restaurant).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-
+            await AddGeneralWaiter(restaurant.Idrestaurant);
             await SendNewPassword(restaurant.Mail ,restaurant.Password);
 
             return restaurant.Password;
+        }
+
+        private async Task AddGeneralWaiter(int idRestaurant)
+        {
+            Waiters waiter = new Waiters();
+            waiter.Idrestaurant = idRestaurant;
+            waiter.WaiterFirstName = "Meseros";
+            waiter.WaiterLasName = "General";
+            _context.Waiters.Add(waiter);
+            await _context.SaveChangesAsync();
         }
 
         private async Task SendNewPassword(string mail, string password)
@@ -181,19 +191,12 @@ namespace MrPiattoWAPI.Controllers
         [HttpPost]
         public async Task<string> PostRestaurant(Restaurant restaurant)
         {
-            //Restaurant res = new Restaurant(restaurant);
-
-            ////res.Idrestaurant = restaurant.Idrestaurant;
-            ////res.Name = restaurant.Name;
-            ////res.Mail = restaurant.Mail;
-            ////res.Phone = restaurant.Phone;
-            ////res.Address = restaurant.Address;
             restaurant.LastLogin = null;
             restaurant.Idcategories = null;
             restaurant.Idpayment = null;
-                _context.Restaurant.Add(restaurant);
-                await _context.SaveChangesAsync();
-                return "Solicitud enviada. Espera la llamada de nuestro equipo!";
+            _context.Restaurant.Add(restaurant);
+            await _context.SaveChangesAsync();
+            return "Solicitud enviada. Espera la llamada de nuestro equipo!";
  }
 
         // GET: api/Restaurants/Verifier/{idRestaurant}

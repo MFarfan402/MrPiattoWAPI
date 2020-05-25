@@ -19,19 +19,6 @@ namespace MrPiattoWAPI.Controllers
         {
             _context = context;
         }
-
-        // GET: api/Categories/Waiters/{idRestaurant}
-        // MAURICIO FARFAN
-        // Lo pongo aqui porque no me dejo crear otro controladoooor. Big CHALE
-        [HttpGet("Waiters/{id}")]
-        public async Task<ActionResult<IEnumerable<Waiters>>> GetWaiters(int id)
-        {
-            var waiters = await _context.Waiters.Where(w => w.Idrestaurant == id).ToListAsync();
-            if (waiters == null)
-                return null;
-            return waiters;
-        }
-
         // GET: api/Categories
         // MAURICIO FARFAN
         // Usuario -> Inicio
@@ -53,84 +40,33 @@ namespace MrPiattoWAPI.Controllers
             }
             return finalCat;
         }
-
-        // GET: api/Categories/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Categories>> GetCategories(int id)
+        // GET: api/Categories/Waiters/{idRestaurant}
+        // MAURICIO FARFAN
+        // Lo pongo aqui porque no me dejo crear otro controladoooor. Big CHALE
+        [HttpGet("Waiters/{id}")]
+        public async Task<ActionResult<IEnumerable<Waiters>>> GetWaiters(int id)
         {
-            var categories = await _context.Categories.FindAsync(id);
-
-            if (categories == null)
-            {
-                return NotFound();
-            }
-
-            return categories;
+            var waiters = await _context.Waiters.Where(w => w.Idrestaurant == id).ToListAsync();
+            if (waiters == null)
+                return null;
+            return waiters;
         }
 
-        // PUT: api/Categories/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategories(int id, Categories categories)
+        // GET: api/Categories/WaitersStatistics/{idRestaurant}
+        // MAURICIO FARFAN
+        // Lo pongo aqui porque no me dejo crear otro controladoooor. Big CHALE x2
+        [HttpGet("WaitersStatistics/{id}/{rating}")]
+        public async Task<bool> GetWaiters(int id, double rating)
         {
-            if (id != categories.Idcategory)
-            {
-                return BadRequest();
-            }
+            WaiterStatistics waiter = new WaiterStatistics();
+            waiter.Idwaiter = id;
+            waiter.Rating = rating;
+            waiter.DateStatistics = DateTime.Now;
 
-            _context.Entry(categories).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoriesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Categories
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPost]
-        public async Task<ActionResult<Categories>> PostCategories(Categories categories)
-        {
-            _context.Categories.Add(categories);
+            _context.WaiterStatistics.Add(waiter);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCategories", new { id = categories.Idcategory }, categories);
-        }
-
-        // DELETE: api/Categories/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Categories>> DeleteCategories(int id)
-        {
-            var categories = await _context.Categories.FindAsync(id);
-            if (categories == null)
-            {
-                return NotFound();
-            }
-
-            _context.Categories.Remove(categories);
-            await _context.SaveChangesAsync();
-
-            return categories;
-        }
-
-        private bool CategoriesExists(int id)
-        {
-            return _context.Categories.Any(e => e.Idcategory == id);
+            return true;
         }
     }
 }
