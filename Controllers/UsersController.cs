@@ -75,75 +75,54 @@ namespace MrPiattoWAPI.Controllers
             return reservations;
         }
 
-        [HttpGet]
-        public async Task<string> SendMail()
+        [HttpGet("Password/{mail}")]
+        public async Task<string> SendMail(string mail)
         {
-            MailjetClient client = new MailjetClient(Environment.GetEnvironmentVariable("36b25d6cba30469cf1cc8911bf79d22a"), 
-                Environment.GetEnvironmentVariable("882892776ad1f8768b813bcc8e8358b0"))
-            {
-                Version = ApiVersion.V3_1,
-            };
-            MailjetRequest request = new MailjetRequest
-            {
-                Resource = Send.Resource,
-            }.Property(Send.Messages, new JArray 
-                {
-                    new JObject 
-                    {
-                        {
-                            "From",
-                            new JObject 
-                            {
-                                {"Email", "maufar402@gmail.com"},
-                                {"Name", "MAURICIO"}
-                            }
-                        }, 
-                        {
-                            "To",
-                            new JArray 
-                            {
-                                new JObject 
-                                {
-                                    {
-                                      "Email",
-                                      "maufar402@gmail.com"
-                                    }, 
-                                    {
-                                      "Name",
-                                      "MAURICIO"
-                                    }
-                                }           
-                            }
-                        }, 
-                        {
-                           "Subject",
-                           "Greetings from Mailjet."
-                        }, 
-                        {
-                           "TextPart",
-                           "My first Mailjet email"
-                        }, 
-                        {
-                           "HTMLPart",
-                           "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!"
-                        }, 
-                        {
-                           "CustomID",
-                           "AppGettingStartedTest"
-                        }
-                    }
-                });
+            var client = _context.User.Where(c => c.Mail == mail).FirstOrDefault();
+            if (client == null)
+                return "Error. El correo ingresado no tiene cuenta en MrPiatto.";
+            
+            client.Password = GeneratePassword();
+            _context.Entry(client).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            await SendNewPassword(client.Mail, client.Password);
+            return "Ha sido enviado un correo con la nueva contraseña.";
+        }
+
+        private async Task SendNewPassword(string mail, string password)
+        {
+            MailjetClient client = new MailjetClient("36b25d6cba30469cf1cc8911bf79d22a", "882892776ad1f8768b813bcc8e8358b0")
+            { Version = ApiVersion.V3_1, };
+            MailjetRequest request = new MailjetRequest { Resource = Send.Resource, }
+            .Property(Send.Messages, new JArray {
+            new JObject {
+                { "From",
+                    new JObject {
+                        {"Email", "maufar402@gmail.com"},
+                        {"Name", "MrPiatto Configuration Manager"}}
+                }, { "To",
+                    new JArray {
+                        new JObject {
+                        { "Email",
+                          $"{mail}"
+                        }, {
+                          "Name",
+                          "Ailem" }}}
+                }, { "Subject", "Tu nueva contraseña de MrPiatto."
+                }, { "TextPart","Sending Password"
+                }, { "HTMLPart",
+                    $"<h3>Lamentamos que hayas perdido tu contraseña.</h3><br/><br/>" +
+                    $"No te preocupes, aquí esta la nueva contraseña:{password}<br/>" +
+                    $"Favor de no responder a este correo."
+                }, { "CustomID","AppGettingStartedTest"}}});
             MailjetResponse response = await client.PostAsync(request);
-            if(response.IsSuccessStatusCode)
-            {
-                return "El mensaje se ha enviado correctamente";
-            }
-            else
-            {
-                return $"StatusCode:  {response.StatusCode}\n" +
-                    $"ErrorInfo: {response.GetErrorInfo()}\n" +
-                    $"ErrorMessage: {response.GetErrorMessage()}";
-            }
+        }
+
+        private string GeneratePassword()
+        {
+            Random random = new Random();
+            return random.Next(10000, 99999).ToString();
         }
     }
 }

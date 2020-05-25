@@ -24,55 +24,74 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO FARFAN
         // Usuario -> Favoritos
         // Method used to retrieve the information of a restaurant marked as favorite from a user.
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
-        //{
-        //    List<Restaurant> favorites = new List<Restaurant>();
-        //    var restaurants = await _context.UserRestaurant
-        //        .Where(u => u.Iduser == id && u.Favorite == true)
-        //        .Select(id => new UserRestaurant
-        //        { Idrestaurant = id.Idrestaurant })
-        //        .ToListAsync();
-        //    foreach (var r in restaurants)
-        //    {
-        //        favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
-        //            .Include(y => y.IdcategoriesNavigation)
-        //            .Include(z => z.IdpaymentNavigation)
-        //            .FirstOrDefault());
-        //    }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserFavorites(int id)
+        {
+            List<Restaurant> favorites = new List<Restaurant>();
+            var restaurants = await _context.UserRestaurant
+                .Where(u => u.Iduser == id && u.Favorite == true)
+                .Select(id => new UserRestaurant
+                { Idrestaurant = id.Idrestaurant })
+                .ToListAsync();
+            foreach (var r in restaurants)
+            {
+                favorites.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
+                    .Include(y => y.IdcategoriesNavigation)
+                    .Include(z => z.IdpaymentNavigation)
+                    .FirstOrDefault());
+            }
 
-        //    if (restaurants == null)
-        //        return NotFound();
+            if (restaurants == null)
+                return NotFound();
 
-        //    return favorites;
-        //}
+            return favorites;
+        }
 
         // GET: api/UserRestaurants/Visited/{idUser}
         // MAURICIO FARFAN
         // Menú lateral -> Visitados
         // Method used to retrieve the information of a restaurant that a user has visited.
-        //[HttpGet("Visited/{id}")]
-        //public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserVisited(int id)
-        //{
-        //    List<Restaurant> visited = new List<Restaurant>();
-        //    var restaurants = await _context.UserRestaurant
-        //        .Where(u => u.Iduser == id && u.Visited == true)
-        //        .Select(id => new UserRestaurant
-        //        { Idrestaurant = id.Idrestaurant })
-        //        .ToListAsync();
-        //    foreach (var r in restaurants)
-        //    {
-        //        visited.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
-        //            .Include(y => y.IdcategoriesNavigation)
-        //            .Include(z => z.IdpaymentNavigation)
-        //            .FirstOrDefault());
-        //    }
+        [HttpGet("Visited/{id}")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetUserVisited(int id)
+        {
+            List<Restaurant> visited = new List<Restaurant>();
+            var restaurants = await _context.UserRestaurant
+                .Where(u => u.Iduser == id && u.Visited == true)
+                .Select(id => new UserRestaurant
+                { Idrestaurant = id.Idrestaurant })
+                .ToListAsync();
+            foreach (var r in restaurants)
+            {
+                visited.Add(_context.Restaurant.Where(x => x.Idrestaurant == r.Idrestaurant)
+                    .Include(y => y.IdcategoriesNavigation)
+                    .Include(z => z.IdpaymentNavigation)
+                    .FirstOrDefault());
+            }
 
-        //    if (restaurants == null)
-        //        return NotFound();
+            if (restaurants == null)
+                return NotFound();
 
-        //    return visited;
-        //}
+            return visited;
+        }
+
+        // GET: api/UserRestaurants/DisableMail/{idUser}
+        // MAURICIO FARFAN
+        // Menú lateral -> Visitados
+        // Method used to retrieve the information of a restaurant that a user has visited.
+        [HttpGet("DisableMail/{id}")]
+        public async Task<bool> LockMailSubscriptions(int id)
+        {
+            var mail = await _context.UserRestaurant
+                .Where(u => u.Iduser == id && u.MailSubscription == true)
+                .ToListAsync();
+            foreach (var m in mail)
+            {
+                m.MailSubscription = false;
+                _context.Entry(m).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        }
 
         // POST: api/userRestaurants
         // MAURICIO FARFAN
@@ -98,21 +117,31 @@ namespace MrPiattoWAPI.Controllers
             return "Restaurante agregado a favoritos";
         }
 
-        // DELETE: api/UserRestaurants/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<UserRestaurant>> DeleteUserRestaurant(int id)
+        // GET: api/userRestaurants/Mail/{idUser}/{idRestaurant}
+        // MAURICIO FARFAN
+        [HttpGet("Mail/{idUser}/{idRestaurant}")]
+        public async Task<string> NewMailSubs(int idUser, int idRestaurant)
         {
-            var userRestaurant = await _context.UserRestaurant.FindAsync(id);
+            UserRestaurant userRestaurant = await _context.UserRestaurant
+                .Where(u => u.Idrestaurant == idRestaurant)
+                .FirstOrDefaultAsync();
+
+
             if (userRestaurant == null)
             {
-                return NotFound();
+                userRestaurant.Iduser = idUser;
+                userRestaurant.Idrestaurant = idRestaurant;
+                userRestaurant.MailSubscription = true;
+                _context.UserRestaurant.Add(userRestaurant);
+                await _context.SaveChangesAsync();
             }
-
-            _context.UserRestaurant.Remove(userRestaurant);
-            await _context.SaveChangesAsync();
-
-            return userRestaurant;
+            else
+            {
+                userRestaurant.MailSubscription = true;
+                _context.UserRestaurant.Update(userRestaurant);
+                await _context.SaveChangesAsync();
+            }
+            return "Te has suscrito al boletín de promociones.";
         }
-
     }
 }
