@@ -108,8 +108,9 @@ namespace MrPiattoWAPI.Controllers
         [HttpGet("Inactive")]
         public async Task<ActionResult<IEnumerable<Restaurant>>> GetInactiveRestaurants()
         {
+            var time = DateTime.Now - new TimeSpan(7, 0, 0, 0);
             List<Restaurant> restaurants = await _context.Restaurant.Where
-                (r => r.LastLogin < DateTime.Now - new TimeSpan(7, 0, 0, 0) && r.Confirmation == true).ToListAsync();
+                (r => r.LastLogin < time && r.Confirmation == true).ToListAsync();
             if (restaurants == null)
                 return null;
             return restaurants;

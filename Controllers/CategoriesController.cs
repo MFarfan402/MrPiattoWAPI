@@ -20,6 +20,18 @@ namespace MrPiattoWAPI.Controllers
             _context = context;
         }
 
+        // GET: api/Categories/Waiters/{idRestaurant}
+        // MAURICIO FARFAN
+        // Lo pongo aqui porque no me dejo crear otro controladoooor. Big CHALE
+        [HttpGet("Waiters/{id}")]
+        public async Task<ActionResult<IEnumerable<Waiters>>> GetWaiters(int id)
+        {
+            var waiters = await _context.Waiters.Where(w => w.Idrestaurant == id).ToListAsync();
+            if (waiters == null)
+                return null;
+            return waiters;
+        }
+
         // GET: api/Categories
         // MAURICIO FARFAN
         // Usuario -> Inicio
