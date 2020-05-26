@@ -239,7 +239,7 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO ANDRES
         // Notificaciones
         // Method used to retrieve the information of the future reservations of the restaurant.
-        [HttpPost("Not/Res/UpdateFromNot/")]
+        [HttpPost("Not/Res/UpdateFromNot")]
         public async Task<string> UpdateResNotifications2(Reservation reservation)
         {
             try
