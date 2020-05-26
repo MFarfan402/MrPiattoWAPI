@@ -62,12 +62,13 @@ namespace MrPiattoWAPI.Controllers
         }
 
         [HttpGet("QR/{id}")]
-        public async void FireAndForgetQr(int id)
+        public async Task<bool> FireAndForgetQr(int id)
         {
             var reservation = _context.Reservation.Where(r => r.Iduser == id && r.Url == ".").FirstOrDefault();
             if (reservation == null)
-                return;
-            await GenerateQRAsync(reservation);
+                return false;
+            return await GenerateQRAsync(reservation);
+             
         }
         // GET: api/Reservations/{idUser}
         // MAURICIO ANDRES
@@ -156,7 +157,7 @@ namespace MrPiattoWAPI.Controllers
                             _context.Reservation.Add(reservation);
                             await _context.SaveChangesAsync();
 
-                            return "Tu reservación se ha generado con éxito.";
+                            return 1.ToString();
                         }
                         else
                         {
@@ -169,7 +170,7 @@ namespace MrPiattoWAPI.Controllers
                                         reservation.Idtable = table.Idtables;
                                         _context.Reservation.Add(reservation);
                                         await _context.SaveChangesAsync();
-                                        return "Tu reservación se ha generado con éxito. ";
+                                        return 1.ToString();
                                     }
                                     else { i = -1; }
                                 }
@@ -182,7 +183,7 @@ namespace MrPiattoWAPI.Controllers
                                             reservation.Idtable = table.Idtables;
                                             _context.Reservation.Add(reservation);
                                             await _context.SaveChangesAsync();
-                                            return "Tu reservación se ha generado con éxito.";
+                                            return 1.ToString();
                                         }
                                         else { i = 0; }
                                     }
@@ -506,15 +507,10 @@ namespace MrPiattoWAPI.Controllers
             }
         }
 
-        private async Task GenerateQRAsync(Reservation reservation)
+        private async Task<bool> GenerateQRAsync(Reservation reservation)
         {
-            string content = JsonConvert.SerializeObject(reservation,Formatting.None,
-                new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
-
-            var client = new RestClient($"https://qrcode3.p.rapidapi.com/generateQR?fill_style=solid&inner_eye_style=circle&style=circle&outer_eye_style=circle&ec_level=M&format=png&text={content}");
+            
+            var client = new RestClient($"https://qrcode3.p.rapidapi.com/generateQR?fill_style=solid&inner_eye_style=circle&style=circle&outer_eye_style=circle&ec_level=M&format=png&text={reservation.Idreservation}");
             var request = new RestRequest(Method.GET);
             request.AddHeader("x-rapidapi-host", "qrcode3.p.rapidapi.com");
             request.AddHeader("x-rapidapi-key", "2226ad8917msh0d8f7e8e40c4b9fp19d487jsn5d51681b32fc");
@@ -528,6 +524,7 @@ namespace MrPiattoWAPI.Controllers
             reservation.Url = $"{pathServer}{reservation.Iduser}_{reservation.Idreservation}.png";
             _context.Entry(reservation).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+            return true;
         }
 
         // DELETE: api/Reservations/5
