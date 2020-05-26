@@ -15,6 +15,7 @@ namespace MrPiattoWAPI.Model
         public bool? Checked { get; set; }
         public string? Name { get; set; }
         public string? LastName { get; set; }
+        public bool CheckedFromApp { get; set; }
 
         public virtual AuxiliarTables IdauxiliarTableNavigation { get; set; }
     }

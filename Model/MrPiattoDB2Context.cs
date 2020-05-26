@@ -48,8 +48,8 @@ namespace MrPiattoWAPI.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
-                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
             }
         }
 
@@ -79,6 +79,8 @@ namespace MrPiattoWAPI.Model
                 entity.Property(e => e.Phone).HasColumnName("Phone");
 
                 entity.Property(e => e.Checked).HasColumnName("checked");
+
+                entity.Property(e => e.CheckedFromApp).HasColumnName("checkedFromApp");
 
                 entity.Property(e => e.Name).HasColumnName("Name");
 
@@ -405,6 +407,8 @@ namespace MrPiattoWAPI.Model
 
                 entity.Property(e => e.Phone).HasColumnName("phone");
 
+                entity.Property(e => e.CheckedFromApp).HasColumnName("checkedFromApp");
+
                 entity.HasOne(d => d.IdtableNavigation)
                     .WithMany(p => p.ManualReservations)
                     .HasForeignKey(d => d.IDTable)
@@ -486,6 +490,8 @@ namespace MrPiattoWAPI.Model
                     .IsUnicode(false);
 
                 entity.Property(e => e.Checked).HasColumnName("checked");
+
+                entity.Property(e => e.CheckedFromApp).HasColumnName("checkedFromApp");
 
                 entity.HasOne(d => d.IdtableNavigation)
                     .WithMany(p => p.Reservation)

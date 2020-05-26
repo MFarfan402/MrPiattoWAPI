@@ -238,6 +238,28 @@ namespace MrPiattoWAPI.Controllers
         // MAURICIO ANDRES
         // Notificaciones
         // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpPost("Not/Res/UpdateFromNot/")]
+        public async Task<string> UpdateResNotifications2(Reservation reservation)
+        {
+            try
+            {
+                var res = await _context.Reservation.Where(r => r.Idreservation == reservation.Idreservation).FirstAsync();
+
+                res.CheckedFromApp = reservation.CheckedFromApp;
+
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
         [HttpGet("Not/Res/{id}/{date}")]
         public async Task<ActionResult<IEnumerable<Reservation>>> GetUserReservationsByHour(int id, DateTime date)
         {
@@ -279,6 +301,28 @@ namespace MrPiattoWAPI.Controllers
                 var res = await _context.AuxiliarReservation.Where(r => r.IdauxiliarReservation == reservation.IdauxiliarReservation).FirstAsync();
 
                 res.Checked = reservation.Checked;
+
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpPost("Not/Aux/UpdateFromNot")]
+        public async Task<string> UpdateAuxNotifications2(AuxiliarReservation reservation)
+        {
+            try
+            {
+                var res = await _context.AuxiliarReservation.Where(r => r.IdauxiliarReservation == reservation.IdauxiliarReservation).FirstAsync();
+
+                res.CheckedFromApp = reservation.CheckedFromApp;
 
                 await _context.SaveChangesAsync();
                 return "Base de datos actualizada";
@@ -430,6 +474,28 @@ namespace MrPiattoWAPI.Controllers
                 var res = await _context.ManualReservations.Where(r => r.IDReservation == reservation.IDReservation).FirstAsync();
 
                 res.Checked = reservation.Checked;
+
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            }
+            catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
+        }
+
+        // GET: api/Reservations/{idUser}
+        // MAURICIO ANDRES
+        // Notificaciones
+        // Method used to retrieve the information of the future reservations of the restaurant.
+        [HttpPost("Not/ManRes/UpdateFromNot")]
+        public async Task<string> UpdateManNotifications2(ManualReservations reservation)
+        {
+            try
+            {
+                var res = await _context.ManualReservations.Where(r => r.IDReservation == reservation.IDReservation).FirstAsync();
+
+                res.CheckedFromApp = reservation.CheckedFromApp;
 
                 await _context.SaveChangesAsync();
                 return "Base de datos actualizada";
