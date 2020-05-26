@@ -217,5 +217,18 @@ namespace MrPiattoWAPI.Controllers
             } 
             return restaurant;
         }
+
+        // GET: api/Restaurants/Photos/{idRestaurant}
+        // MAURICIO FARFAN
+        [HttpGet("Photos/{id}")]
+        public async Task<ActionResult<IEnumerable<string>>> GetUrlPhotos(int id)
+        {
+            var urlPhotos = await _context.RestaurantPhotos.Where(p => p.Idrestaurant == id).ToListAsync();
+            if (urlPhotos == null) return null;
+            List<string> url = new List<string>();
+            foreach (var u in urlPhotos)
+                url.Add(u.Url);
+            return url;
+        }
     }
 }

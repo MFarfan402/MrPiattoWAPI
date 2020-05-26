@@ -23,24 +23,16 @@ namespace MrPiattoWAPI.Controllers
             _context = context;
         }
 
+        // MAURICIO FARFAN
+        [HttpGet("LogIn/{user}/{password}")]
+        public async Task<Model.User> LogInUser(string user, string password)
+        {
+            var u = await _context.User.Where(u => u.Mail == user && u.Password == password).FirstOrDefaultAsync();
+            return (u == null) ? null : u;
+        }
+
         // POST: api/Users
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
-        //[HttpPost]
-        //public async Task<User> PostUser(User user)
-        //{
-        //    var u = await _context.User.Where(u => u.Mail == user.Mail && u.Password == u.Password).FirstOrDefaultAsync();
-
-        //    if (user == null)
-        //    {
-        //        return new User();
-        //    }
-        //    return u;
-        //}
-
-        //POST: api/Users
-        //To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        // MAURICIO FARFAN
         [HttpPost]
         public async Task<int> PostUser(Model.User user)
         {
@@ -49,6 +41,24 @@ namespace MrPiattoWAPI.Controllers
             await _context.SaveChangesAsync();
             var id = _context.User.Where(u => u.Mail == user.Mail).FirstOrDefault();
             return id.Iduser;
+        }
+
+        // POST: api/Users/Update
+        // MAURICIO FARFAN
+        [HttpPost("Update")]
+        public async Task<bool> Update(Model.User user)
+        {
+            var oldUser = await _context.User.Where(u => u.Iduser == user.Iduser).FirstOrDefaultAsync();
+            if (oldUser == null)
+                return false;
+
+            oldUser.FirstName = user.FirstName;
+            oldUser.LastName = user.LastName;
+            oldUser.Phone = user.Phone;
+            oldUser.Gender = user.Gender;
+            _context.User.Update(oldUser);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         [HttpGet("Intervals/{id}/{interval1}/{interval2}")]

@@ -42,6 +42,25 @@ namespace MrPiattoWAPI.Controllers
             return reservations;
             
         }
+
+        // GET: api/Reservations/Delete/{id}
+        // MAURICIO FARFAN
+        // Usuario -> Mis Reservaciones
+        // Method used to retrieve the information of the future reservations of the client.
+        [HttpGet("Delete/{id}")]
+        public async Task<bool> DeleteReservationUser(int id)
+        {
+            var reservation = await _context.Reservation.FindAsync(id);
+            CheckForStrike(reservation);
+            _context.Reservation.Remove(reservation);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private void CheckForStrike(Reservation reservation)
+        {
+        }
+
         [HttpGet("QR/{id}")]
         public async void FireAndForgetQr(int id)
         {
