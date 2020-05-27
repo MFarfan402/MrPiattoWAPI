@@ -63,9 +63,33 @@ namespace MrPiattoWAPI.Controllers
             _context.Entry(restaurant).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             await AddGeneralWaiter(restaurant.Idrestaurant);
+            await SetPoicies(restaurant.Idrestaurant);
             await SendNewPassword(restaurant.Mail ,restaurant.Password);
 
             return restaurant.Password;
+        }
+
+        private async Task SetPoicies(int idrestaurant)
+        {
+            Policies policies = new Policies();
+            policies.MaxTimeRes = 7;
+            policies.MaxTimePer = 2;
+            policies.MinTimeRes = 1;
+            policies.MinTimePer = 2;
+
+            policies.ModTimeDays = 1;
+            policies.ModTimeSeats = 0;
+            policies.ModTimeHours = 8;
+
+            policies.MaxTimeArr = 30;
+            policies.MaxTimeArrPer = 0;
+            policies.Strikes = true;
+            policies.StrikeType = 7;
+            policies.StrikeTypePer = 2;
+            policies.Idrestaurant = idrestaurant;
+
+            _context.Policies.Add(policies);
+            await _context.SaveChangesAsync();
         }
 
         private async Task AddGeneralWaiter(int idRestaurant)

@@ -43,6 +43,87 @@ namespace MrPiattoWAPI.Controllers
             
         }
 
+        // POST: api/Reservations/Update/
+        // MAURICIO FARFAN
+        [HttpPost("Update")]
+        public async Task<string> ModifyReservation(Reservation reservation)
+        {
+            var restaurant = _context.RestaurantTables.Where(r => r.Idtables == reservation.Idtable).FirstOrDefault();
+
+            var lockedRes = _context.LockedHours.Where(l => l.Idrestaurant == restaurant.Idrestaurant
+            && l.StartDate <= reservation.Date && l.EndDate >= reservation.Date).Count();
+
+            if (lockedRes != 0)
+                return "El restaurante no admite reservaciones para esa fecha.";
+
+            var tables = _context.RestaurantTables.Where(t => t.Idrestaurant == restaurant.Idrestaurant
+            && t.Seats >= reservation.AmountOfPeople).ToList();
+
+            List<Reservation> reservations;
+            if (tables.Count() != 0)
+            {
+                foreach (var table in tables)
+                {
+                    var lockedTable = _context.LockedTables.Where(t => t.Idtables == table.Idtables &&
+                    t.StartDate <= reservation.Date && t.EndDate >= reservation.Date).Count();
+                    if (lockedTable == 0)
+                    {
+                        reservations = _context.Reservation
+                        .Where(r => r.Idtable == table.Idtables && r.Date.Date == reservation.Date.Date).OrderBy(r => r.Date)
+                        .ToList();
+                        if (reservations.Count == 0)
+                        {
+                            reservation.Idtable = table.Idtables;
+                            await UpdateReservationDBAsync(reservation);
+                            return "¡Tu reservación ha sido actualizada con éxito! ¡Te esperamos!";
+                        }
+                        else
+                        {
+                            for (int i = reservations.Count - 1; i >= 0; i--)
+                            {
+                                if (reservation.Date > reservations[i].Date)
+                                {
+                                    if ((reservation.Date - reservations[i].Date).TotalMinutes > 119)
+                                    {
+                                        reservation.Idtable = table.Idtables;
+                                        await UpdateReservationDBAsync(reservation);
+                                        return "¡Tu reservación ha sido actualizada con éxito! ¡Te esperamos!";
+                                    }
+                                    else { i = -1; }
+                                }
+                                else
+                                {
+                                    if (i == 0)
+                                    {
+                                        if ((reservations[i].Date - reservation.Date).TotalMinutes > 119)
+                                        {
+                                            reservation.Idtable = table.Idtables;
+                                            await UpdateReservationDBAsync(reservation);
+                                            return "¡Tu reservación ha sido actualizada con éxito! ¡Te esperamos!";
+                                        }
+                                        else { i = 0; }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                return "No hay disponibilidad para este horario";
+            }
+            return "Favor de contactar al restaurante para hacer la reservación.";
+        }
+
+        private async Task UpdateReservationDBAsync(Reservation reservation)
+        {
+            var oldRes = _context.Reservation.Where(r => r.Idreservation == reservation.Idreservation).FirstOrDefault();
+            oldRes.Date = reservation.Date;
+            oldRes.AmountOfPeople = reservation.AmountOfPeople;
+            oldRes.Idtable = reservation.Idtable;
+
+            _context.Reservation.Update(oldRes);
+            await _context.SaveChangesAsync();
+        }
+
         // GET: api/Reservations/Delete/{id}
         // MAURICIO FARFAN
         // Usuario -> Mis Reservaciones
