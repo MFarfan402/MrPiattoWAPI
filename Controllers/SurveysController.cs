@@ -22,8 +22,40 @@ namespace MrPiattoWAPI.Controllers
 
         // GET: api/Surveys/{idRestaurant}
         // MAURICIO FARFAN
-        // Usuario -> RestaurantView && Usuario -> RestaurantView -> Ver todas las reseñas
-        // Method used to get the score bars of a restaurant.
+        [HttpGet("Alexa/{idRes}/{A1}/{A2}/{A3}/{A4}/{A0}")]
+        // idRestaurant, waiterCal, foodCal, comfortCal, generalCal, waiterName
+        public async Task PostAlexaSurvey(int idRes, int A1, int A2, int A3, int A4, string A0)
+        {
+            Surveys survey = new Surveys();
+            Waiters waiters;
+
+            survey.Idrestaurant = idRes;
+            survey.Iduser = 3; ///// ESTE DEBE DE SER EL USER GENERAL
+            survey.FoodRating = A2 / 2;
+            survey.ComfortRating = A3 / 2;
+            survey.GeneralScore = A4 / 2;
+            survey.ServiceRating = A1 / 2;
+            survey.DateStatistics = DateTime.Now;
+            if (A0 != "0")
+            {
+                waiters = await _context.Waiters.Where(w => w.Idrestaurant == idRes &&
+                    w.WaiterFirstName.Contains(A0)).FirstOrDefaultAsync();
+                survey.Idwaiter = (waiters == null) ? 0 : waiters.Idwaiter;
+            }
+            if (survey.Idwaiter == 0)
+            {
+                var genWaiter = await _context.Waiters.Where(w => w.Idrestaurant == idRes)
+                    .OrderBy(w => w.Idwaiter).FirstOrDefaultAsync();
+                survey.Idwaiter = genWaiter.Idwaiter;
+            }
+            _context.Surveys.Add(survey);
+            await _context.SaveChangesAsync();
+        }
+
+
+
+        // GET: api/Surveys/{idRestaurant}
+        // MAURICIO FARFAN
         [HttpGet("Bars/{id}")]
         public async Task<List<int>> GetScore(int id)
         {
