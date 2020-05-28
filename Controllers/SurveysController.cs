@@ -52,8 +52,6 @@ namespace MrPiattoWAPI.Controllers
             await _context.SaveChangesAsync();
         }
 
-
-
         // GET: api/Surveys/{idRestaurant}
         // MAURICIO FARFAN
         [HttpGet("Bars/{id}")]

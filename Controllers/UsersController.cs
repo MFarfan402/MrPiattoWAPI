@@ -37,6 +37,7 @@ namespace MrPiattoWAPI.Controllers
         public async Task<int> PostUser(Model.User user)
         {
             user.UnlockedDay = null;
+            user.Gender = "Otros";
             _context.User.Add(user);
             await _context.SaveChangesAsync();
             var id = _context.User.Where(u => u.Mail == user.Mail).FirstOrDefault();

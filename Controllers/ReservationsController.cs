@@ -20,8 +20,8 @@ namespace MrPiattoWAPI.Controllers
     public class ReservationsController : ControllerBase
     {
         private readonly MrPiattoDB2Context _context;
-        readonly string pathQRBase = @"C:\Users\mauri\OneDrive\Escritorio\images\qr";
-        readonly string pathServer = "http://192.168.100.207/images/qr/";
+        readonly string pathQRBase = @"C:\Users\Administrador.WIN-IHAFOI0KOM7\Desktop\images\qr";
+        readonly string pathServer = "http://200.23.157.109/images/qr/";
 
         public ReservationsController(MrPiattoDB2Context context)
         {
@@ -591,7 +591,7 @@ namespace MrPiattoWAPI.Controllers
         private async Task<bool> GenerateQRAsync(Reservation reservation)
         {
             
-            var client = new RestClient($"https://qrcode3.p.rapidapi.com/generateQR?fill_style=solid&inner_eye_style=circle&style=circle&outer_eye_style=circle&ec_level=M&format=png&text={reservation.Idreservation}");
+            var client = new RestClient($"https://qrcode3.p.rapidapi.com/generateQR?fill_style=solid&inner_eye_style=circle&style=circle&outer_eye_style=circle&ec_level=M&format=png&size=800&text={reservation.Idreservation}");
             var request = new RestRequest(Method.GET);
             request.AddHeader("x-rapidapi-host", "qrcode3.p.rapidapi.com");
             request.AddHeader("x-rapidapi-key", "2226ad8917msh0d8f7e8e40c4b9fp19d487jsn5d51681b32fc");
