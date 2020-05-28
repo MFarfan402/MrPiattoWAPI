@@ -33,8 +33,8 @@ namespace MrPiattoWAPI
             services.AddConnections();
             services.AddDbContext<MrPiattoWAPI.Model.MrPiattoDB2Context>(options =>
             //options.UseSqlServer("Server = PC; Database = MrPiattoDB2;User Id=sql_user;Password=1234;"));
-            options.UseSqlServer("Server = MFARFAN\\MSSQLSERVER01; Database = MrPiattoDB2;User Id=sql_user;Password=1234;"));
-            //options.UseSqlServer("Server = SRVMRPIATTO; Database = MrPiattoDB2; User Id=sql_user;Password=1234;"));
+            //options.UseSqlServer("Server = MFARFAN\\MSSQLSERVER01; Database = MrPiattoDB2;User Id=sql_user;Password=1234;"));
+            options.UseSqlServer("Server = SRVMRPIATTO; Database = MrPiattoDB2; User Id=sql_user;Password=1234;"));
             services.AddMvc().AddControllersAsServices().
                 AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);

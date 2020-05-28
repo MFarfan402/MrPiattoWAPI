@@ -49,7 +49,8 @@ namespace MrPiattoWAPI.Model
             if (!optionsBuilder.IsConfigured)
             {
                 //optionsBuilder.UseSqlServer("Server=PC;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
-                optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                //optionsBuilder.UseSqlServer("Server=MFARFAN\\MSSQLSERVER01;Database=MrPiattoDB2;User Id=sql_user;Password=1234;");
+                optionsBuilder.UseSqlServer("Server = SRVMRPIATTO; Database = MrPiattoDB2; User Id=sql_user;Password=1234;");
             }
         }
 
@@ -587,6 +588,9 @@ namespace MrPiattoWAPI.Model
                     .HasColumnName("urlMainFoto")
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.FirstLog).HasColumnName("firstLog");
+
             });
 
 

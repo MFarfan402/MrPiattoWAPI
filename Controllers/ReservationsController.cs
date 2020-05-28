@@ -624,6 +624,33 @@ namespace MrPiattoWAPI.Controllers
             return reservation;
         }
 
+        [HttpGet("Reservation/All/{id}")]
+        public async Task<ActionResult<IEnumerable<Reservation>>> GetAllReservations(int id)
+        {
+            var reservations = await _context.Reservation.Include(t => t.IdtableNavigation).Include(r => r.IduserNavigation).Where(r => r.IdtableNavigation.Idrestaurant == id).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        [HttpGet("ManualReservation/All/{id}")]
+        public async Task<ActionResult<IEnumerable<ManualReservations>>> GetAllManualReservations(int id)
+        {
+            var reservations = await _context.ManualReservations.Include(t => t.IdtableNavigation).Where(r => r.IdtableNavigation.Idrestaurant == id).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
+        [HttpGet("AuxiliarReservation/All/{id}")]
+        public async Task<ActionResult<IEnumerable<AuxiliarReservation>>> GetAllAuxiliarReservations(int id)
+        {
+            var reservations = await _context.AuxiliarReservation.Include(t => t.IdauxiliarTableNavigation).Where(r => r.IdauxiliarTableNavigation.Idrestaurant == id).ToListAsync();
+            if (reservations == null)
+                return NotFound();
+            return reservations;
+        }
+
         private bool ReservationExists(int id)
         {
             return _context.Reservation.Any(e => e.Idreservation == id);

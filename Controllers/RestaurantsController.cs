@@ -33,6 +33,12 @@ namespace MrPiattoWAPI.Controllers
             return await _context.Restaurant.Where(r => r.Confirmation == false).ToListAsync();
         }
 
+        [HttpGet("Accepted")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetAcceptedRestaurant()
+        {
+            return await _context.Restaurant.Where(r => r.Confirmation == true).ToListAsync();
+        }
+
         // GET: api/Restaurants/Deny/{idRestaurant}
         // MAURICIO FARFAN
         // Verficador -> Añadir -> Denegar
@@ -221,7 +227,22 @@ namespace MrPiattoWAPI.Controllers
             _context.Restaurant.Add(restaurant);
             await _context.SaveChangesAsync();
             return "Solicitud enviada. Espera la llamada de nuestro equipo!";
- }
+        }
+
+        [HttpGet("LogIn/{id}")]
+        public async Task<ActionResult<string>> FirstLogIn(int id)
+        {
+            var restaurant = await _context.Restaurant.Where(r => r.Idrestaurant == id).FirstAsync();
+
+            restaurant.FirstLog = true;
+            await _context.SaveChangesAsync();
+
+            if (restaurant == null)
+            {
+                return "Error";
+            }
+            return "Logro. Primer inicio de sesion";
+        }
 
         // GET: api/Restaurants/Verifier/{idRestaurant}
         // MAURICIO FARFAN
@@ -253,6 +274,22 @@ namespace MrPiattoWAPI.Controllers
             foreach (var u in urlPhotos)
                 url.Add(u.Url);
             return url;
+        }
+
+        [HttpGet("Delete/{id}")]
+        public async Task<string> DeleteRestaurant(int id)
+        {
+            try
+            {
+                var restaurant = await _context.Restaurant.Where(p => p.Idrestaurant == id).FirstAsync();
+
+                _context.Restaurant.Remove(restaurant);
+                await _context.SaveChangesAsync();
+                return "Base de datos actualizada";
+            } catch
+            {
+                return "Error. Hubo un error al actualizar la base de datos";
+            }
         }
     }
 }

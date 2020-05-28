@@ -65,7 +65,7 @@ namespace MrPiattoWAPI.Model
         public int? Idcategories { get; set; }
         public int? Idpayment { get; set; }
         public string UrlMainFoto { get; set; }
-
+        public bool? FirstLog { get; set; }
         public virtual Categories IdcategoriesNavigation { get; set; }
         public virtual PaymentOptions IdpaymentNavigation { get; set; }
         public virtual ICollection<AuxiliarTables> AuxiliarTables { get; set; }
